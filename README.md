@@ -12,8 +12,11 @@ hgw通过【ETCD】存储服务数据，状态监控。
 6. 负载均衡
 7. 访问统计
 
+#### 测试地址
+网关服务：http://39.106.167.166
+控制服务：http://39.106.167.166:8080/admin/
 
-![metricspng](https://img.hacpai.com/pipe/450370050/450370050/450370050/4fce259c13ae47ce849d64a275479763.png)
+![metricspng](https://img.hacpai.com/pipe/450370050/450370050/450370050/006cb39d23e94ec28949434f3b2f7817.png)
 
 ![domainpng](https://img.hacpai.com/pipe/450370050/450370050/450370050/8df958d3ece3464abd66dc1f898bc284.png)
 
@@ -57,17 +60,17 @@ Flags:
 ```
 
 ##### 参数
---ser-name [gateway服务的识别名称]
+--ser-name 【gateway服务的识别名称】
 
---addr[gateway http服务的监听地址]
+--addr 【gateway http服务的监听地址】
 
---tls-addr[gateway https服务的监听地址]
+--tls-addr 【gateway https服务的监听地址】
 
---etcd[连接etcd服务的地址]
+--etcd 【连接etcd服务的地址】
 
---u[连接etcd服务的账户]
+--u 【连接etcd服务的账户】
 
---p[连接etcd服务的密码]
+--p 【连接etcd服务的密码】
 
 ```
 ./gateway --ser-name=gateway-1 --addr=0.0.0.0:80 --etcd=127.0.0.1:2379
@@ -86,13 +89,13 @@ Flags:
       --p=""       Password: etcd password
 ```
 ##### 参数
---addr[manager 服务的监听地址]
+--addr 【manager 服务的监听地址】
 
---etcd[连接etcd服务的地址]
+--etcd 【连接etcd服务的地址】
 
---u[连接etcd服务的账户]
+--u 【连接etcd服务的账户】
 
---p[连接etcd服务的密码]
+--p 【连接etcd服务的密码】
 
 ```
 ./manager --addr=0.0.0.0:8080 --etcd=127.0.0.1:2379
