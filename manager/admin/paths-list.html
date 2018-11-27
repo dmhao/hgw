@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="layui-anim layui-anim-up">
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn" onclick="path_add()"><i class="layui-icon"></i>添加路径</button>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th width="25%">ID</th>
+            <th>方法</th>
+            <th>路径</th>
+            <th>创建日期</th>
+            <th width="25%">操作</th>
+        </tr>
+        </thead>
+        <tbody id="domain_list">
+
+        </tbody>
+    </table>
+
+</div>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/xadmin.js"></script>
+<script type="text/javascript" src="./js/admin.js"></script>
+<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script>
+    var domain_id = "";
+    $(document).ready(function(){
+        domain_id = getUrlParam("domain_id");
+        if(domain_id == "") {
+            layer.alert("无域名id数据", {icon: 2}, function () {
+                parent.refresh();
+                x_admin_close();
+            });
+        }
+
+        request("GET", HGW_MANAGE_API + "domains/"+domain_id+"/paths/", "json", false, {},
+            function(rsp) {
+                var list_html = "";
+                if(rsp.status == 1) {
+                    for(var i=0; i< rsp.data.length; i++) {
+                        list_html += "<tr class=\"text-c\">"
+                        list_html += "<td>"+rsp.data[i].id+"</td>"
+                        list_html += "<td>"+rsp.data[i].req_method+"</td>"
+                        list_html += "<td>"+rsp.data[i].req_path+"</td>"
+                        list_html += "<td>"+rsp.data[i].set_time+"</td>"
+                        list_html += "<td class=\"f-14 td-manage\"> " +
+                                "<a onClick=\"path_edit(this,'"+rsp.data[i].id+"')\" title=\"编辑\">编辑" +
+                                "</a>&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                "<a onClick=\"path_del(this,'"+rsp.data[i].id+"')\" title=\"删除\">删除" +
+                                "</a>&nbsp;&nbsp;" +
+                                "</td>"
+                        list_html += "</tr>"
+                    }
+                }
+                $("#domain_list").html(list_html);
+                $('.layui-table').dataTable({
+                    "bStateSave": true,//状态保存
+                    "pading":false,
+                    "searching": false,
+                    "lengthChange" : false,
+                });
+            });
+    });
+
+    function refresh() {
+        location.replace(location.href);
+    }
+
+    function path_add() {
+        x_admin_show('添加路径','./path-add.html'+'?domain_id='+domain_id);
+    }
+
+    function path_edit(obj, path_id) {
+        x_admin_show('路径修改',"path-edit.html?domain_id="+domain_id+"&path_id="+path_id);
+    }
+
+
+    /*路径设置-删除*/
+    function path_del(obj,path_id){
+        layer.confirm('确认要删除吗？',function(index){
+            request("DELETE", HGW_MANAGE_API + "domains/" + domain_id+"/paths/"+path_id, "json", false, {},
+                function(rsp) {
+                    if(rsp.status == 1) {
+                        layer.msg('成功', {
+                            icon: 1,
+                            time: 800
+                        }, function(){
+                            refresh();
+                        });
+                    } else {
+                        layer.alert("失败");
+                    }
+                });
+        });
+    }
+
+</script>
+</body>
+
+</html>

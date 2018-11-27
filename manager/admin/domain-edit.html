@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label for="domain_name" class="layui-form-label">
+                <span class="x-red">*</span>名称
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="domain_name" name="domain_name" lay-verify="required" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="domain_url" class="layui-form-label">
+                <span class="x-red">*</span>监听的域名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="domain_url" name="domain_url" placeholder="包含http/https的域名地址" lay-verify="required|url" class="layui-input" disabled >
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="lb" class="layui-form-label">
+                <span class="x-red">*</span>负载均衡
+            </label>
+            <div class="layui-input-inline">
+                <select id="lb_type" name="lb_type" class="valid">
+                    <option value="roundRobin">轮询</option>
+                    <option value="random">随机</option>
+                </select>
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" id="proxy_target" name="proxy_target"  placeholder="包含http/https的域名地址"
+                       lay-verify="proxy_target" class="layui-input">
+            </div>
+            <input type="button"  class="layui-btn" id="add_target" value="增加目标">
+            <div class="layui-input-block" id="domain_list" style="display: none;">
+                <table class="layui-table"  style="width: 35%">
+                    <tbody id="domain_list_table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="lb" class="layui-form-label">限流</label>
+            <div class="layui-input-inline">
+                <input type="text" id="rate_limiter_num" name="rate_limiter_num"
+                       class="layui-input" placeholder="每（秒）请求数" lay-verify="rateLimiter">
+            </div>
+            <div class="layui-input-inline">
+                <input type="checkbox" id="rate_limiter" name="rate_limiter" lay-skin="switch" lay-text="ON|OFF">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="lb" class="layui-form-label"></label>
+            <div class="layui-input-block">
+                <textarea name="rate_limiter_msg" id="rate_limiter_msg" placeholder="自定义限流返回结果" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="lb" class="layui-form-label">黑名单</label>
+            <div class="layui-input-inline">
+                <input type="text" id="black_ip" name="black_ip" class="layui-input">
+            </div>
+            <input type="button"  class="layui-btn" id="add_black_ip" value="增加IP">
+            <div class="layui-input-block" id="black_ip_list" style="display: none;">
+                <table class="layui-table" style="width: 35%">
+                    <tbody id="black_ip_list_table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+            </label>
+            <button class="layui-btn" lay-submit lay-filter="sub">提交</button>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/xadmin.js"></script>
+<script type="text/javascript" src="./js/admin.js"></script>
+
+<script>
+    var domain_id = "";
+    var proxy_targets = [];
+    var black_ips = {};
+
+    $(function(){
+        domain_id = getUrlParam("domain_id");
+        request("GET", HGW_MANAGE_API + "domains/"+domain_id, "json", false,{},
+            function(rsp) {
+                if(rsp.status == 1) {
+                    $("#domain_name").val(rsp.data.domain_name);
+                    $("#domain_url").val("http://"+rsp.data.domain_url);
+                    $("#lb_type").val(rsp.data.lb_type);
+                    if(rsp.data.rate_limiter_num) {
+                        $("#rate_limiter").attr("checked", "checked");
+                        $("#rate_limiter_num").val(rsp.data.rate_limiter_num);
+                        $("#rate_limiter_msg").val(rsp.data.rate_limiter_msg);
+                    }
+
+                    black_ips = rsp.data.black_ips;
+                    proxy_targets = rsp.data.targets;
+                    refresh_target_html();
+                    refresh_black_ip_list_html();
+                } else {
+                    layer.alert("数据异常", {icon: 6}, function () {
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    });
+                }
+            });
+    });
+
+
+    function del_target(index) {
+        proxy_targets.splice(index, 1);
+        refresh_target_html();
+    }
+
+    function refresh_target_html() {
+        proxy_targets = unique(proxy_targets)
+        if(proxy_targets.length > 0) {
+            $("#domain_list").show();
+            var domain_table_html = "";
+            for(var i=0; i<proxy_targets.length; i++) {
+                domain_table_html += "<tr>" +
+                        "<td width='50%'>"+proxy_targets[i].pointer+"</td>" +
+                        "<td width='25%'>"+proxy_targets[i].weight+"</td>" +
+                        "<td width='25%'><span onclick=\"del_target("+i+")\">删除</span></td>" +
+                "</tr>";
+            }
+            $("#domain_list_table").html(domain_table_html);
+        } else {
+            $("#domain_list_table").html("");
+            $("#domain_list").hide();
+        }
+    }
+
+    $("#add_target").click(function (e) {
+        var target_val = $("#proxy_target").val();
+        if (target_val != "") {
+            var target = {"pointer": target_val, "weight": 1};
+            proxy_targets.push(target)
+        }
+        refresh_target_html();
+    });
+
+
+    function del_black_ip(index) {
+        delete black_ips[index];
+        refresh_black_ip_list_html();
+    }
+
+    function refresh_black_ip_list_html() {
+        if(Object.keys(black_ips).length > 0) {
+            $("#black_ip_list").show();
+            var black_ip_lists_html = "";
+            for (var ip in black_ips) {
+                black_ip_lists_html += "<tr>" +
+                        "<td>"+ip+"</td>" +
+                        "<td width='25%'><span onclick=\"del_black_ip('"+ip+"')\">删除</span></td>" +
+                        "</tr>";
+            }
+            $("#black_ip_list_table").html(black_ip_lists_html);
+        } else {
+            $("#black_ip_list_table").html("");
+            $("#black_ip_list").hide();
+        }
+    }
+
+    $("#add_black_ip").click(function (e) {
+        var ip = $("#black_ip").val();
+        if (ip != "") {
+            if(isValidIP(ip)) {
+                black_ips[ip] = true
+            } else {
+                layer.msg('请输入正确ip', {
+                    icon: 2,
+                    time: 1000 //2秒关闭（如果不配置，默认是3秒）
+                }, function(){
+                    $("#black_ip").focus();
+                })
+            }
+        }
+        refresh_black_ip_list_html();
+    });
+
+    layui.use(['form','layer'], function(){
+        var form = layui.form,layer = layui.layer;
+        form.verify({
+            proxy_target: function(value){
+                if(proxy_targets < 1){
+                    return '请填写转发目标地址';
+                }
+            },
+            rateLimiter: function(value) {
+                if($("#rate_limiter").is(':checked')) {
+                    if (!new RegExp("^[0-9]+$").test(value)) {
+                        return '请输入正整数';
+                    }
+                }
+            }
+        });
+        form.on('submit(sub)', function(data){
+            var domain_name = $("#domain_name").val();
+            var domain_url = $("#domain_url").val();
+            var lb_type = $("#lb_type").val();
+            var rate_limiter_num = $("#rate_limiter_num").val();
+            var rate_limiter_msg = $("#rate_limiter_msg").val();
+
+            var params = {
+                domain_name: domain_name,
+                domain_url: domain_url,
+                lb_type: lb_type,
+                proxy_targets: JSON.stringify(proxy_targets),
+                black_ips: Object.keys(black_ips).length > 0 ? JSON.stringify(black_ips) : '',
+                rate_limiter_num: rate_limiter_num,
+                rate_limiter_msg: rate_limiter_msg
+            };
+
+            request("POST", HGW_MANAGE_API + "domains/"+domain_id, "json", false, params,
+                    function(rsp) {
+                        if (rsp.status == 1) {
+                            layer.alert("修改成功", {icon: 6}, function () {
+                                parent.refresh();
+                                x_admin_close();
+                            });
+                        } else {
+                            layer.alert("失败");
+                        }
+                    });
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

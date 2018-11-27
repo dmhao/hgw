@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台登录-X-admin2.0</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+</head>
+<body>
+<div class="x-nav">
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:refresh()" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+</div>
+<div class="x-body">
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+        <legend>系统数据</legend>
+    </fieldset>
+    <div class="layui-card">
+        <div class="layui-card-body" id="machine_data"></div>
+    </div>
+
+    <div id="count_chart" style="width: 100%;height:400px; padding-top: 50px;"></div>
+
+    <div id="timeline_chart" style="width: 100%;height:400px; padding-top: 50px;"></div>
+    <div>
+        <select id="handler_filter">
+        </select>
+    </div>
+</div>
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/xadmin.js"></script>
+<script type="text/javascript" src="./js/admin.js"></script>
+<script src="//cdn.bootcss.com/echarts/3.3.2/echarts.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+    var server_name = "";
+    var all_handler = [];
+    var metrics_data;
+    var timeline_chart = echarts.init(document.getElementById('timeline_chart'));
+    var count_chart = echarts.init(document.getElementById('count_chart'));
+
+    $(document).ready(function(){
+        server_name = getUrlParam("server_name");
+
+        request("GET", HGW_MANAGE_API + "gateways/"+server_name, "json", false,{},
+                function(rsp) {
+                    if(rsp.status == 1) {
+                        //设置及其监控数据
+                        set_machine_data(JSON.parse(rsp.data["machine"]));
+
+                        set_metrics_data(rsp.data);
+                        //设置所有的handler
+                        set_all_handler();
+                        //设置访问量统计
+                        set_count_chart();
+                        //设置访问时长统计
+                        set_timeline_chart()
+                    }
+                });
+    });
+
+
+
+    $("#handler_filter").change(function (e) {
+        $fiter = $("#handler_filter").val();
+        set_timeline_chart($fiter);
+    });
+
+    function set_metrics_data(data) {
+        metrics_data = data;
+        metrics_data["times"].reverse();
+    }
+
+    function set_all_handler() {
+        if(Object.keys(metrics_data["metrics"]).length > 0) {
+            for (var key in metrics_data["metrics"]) {
+                all_handler.push(key);
+            }
+        }
+        var filter_html = "";
+        if(all_handler.length == 0) {
+            $("#handler_filter").hide();
+        } else {
+            $("#handler_filter").show();
+        }
+        for(var i=0; i < all_handler.length; i++) {
+            filter_html += "<option value=\""+all_handler[i]+"\">"+all_handler[i]+"</option>";
+        }
+        $("#handler_filter").html(filter_html);
+    }
+
+    function set_machine_data(machine_data) {
+        var avg_data = JSON.parse(machine_data["Avg"]);
+        var mem_data = JSON.parse(machine_data["Mem"]);
+        var machine_html = "";
+        machine_html += "" +
+                "Mem【 " +
+                "Total: "+convertByte(mem_data["total"])+", Used:"+convertByte(mem_data["used"])+", UsedPercent:"+mem_data["usedPercent"]+
+                "%】</br>" ;
+
+        machine_html +=
+            "负载【 " +
+            "Load1: "+avg_data["load1"]+", Load5:"+avg_data["load5"]+", Load15:"+avg_data["load15"]+
+            "】</br>" ;
+        $("#machine_data").html(machine_html);
+    }
+
+    function set_timeline_chart(handler_filter = "/*") {
+        if(Object.keys(metrics_data["metrics"]).length > 0) {
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '访问时长监控'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: []
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: []
+                },
+                yAxis: {
+                    name: '时长（ms）',
+                    type: 'value'
+                },
+                series: []
+            };
+            option.xAxis.data = metrics_data["times"];
+            var keys = ["max", "min", "mean"];
+            var series = [
+            ];
+            var serie_max = {name:"max", type: "line", data:[]};
+            var serie_min = {name:"min", type: "line", data:[]};
+            var serie_mean = {name:"mean", type: "line", data:[]};
+            for (var i = metrics_data["metrics"][handler_filter].length-1; i >= 0; i--) {
+                serie_max["data"].push(metrics_data["metrics"][handler_filter][i]["max"]);
+                serie_min["data"].push(metrics_data["metrics"][handler_filter][i]["min"]);
+                serie_mean["data"].push(metrics_data["metrics"][handler_filter][i]["mean"]);
+            }
+            series.push(serie_max);
+            series.push(serie_min);
+            series.push(serie_mean);
+            option.legend.data = keys;
+            option.series = series;
+            // 使用刚指定的配置项和数据显示图表。
+            timeline_chart.setOption(option);
+        }
+    }
+
+    function set_count_chart() {
+        if(Object.keys(metrics_data["metrics"]).length > 0) {
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '访问统计图'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: []
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: []
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                series: []
+            };
+            option.xAxis.data = metrics_data["times"];
+            var series = [];
+            for (var key in metrics_data["metrics"]) {
+                var serie = {};
+                serie["name"] = key;
+                serie["type"] = "line";
+                serie["stack"] = "总量";
+                serie["data"] = [];
+                for (var i = metrics_data["metrics"][key].length-1; i >= 0; i--) {
+                    serie["data"].push(metrics_data["metrics"][key][i]["count"]);
+                }
+                series.push(serie);
+            }
+            option.legend.data = all_handler;
+            option.series = series;
+            // 使用刚指定的配置项和数据显示图表。
+            count_chart.setOption(option);
+        }
+    }
+    function refresh() {
+        location.replace(location.href);
+    }
+</script>
+</body>
+</html>
