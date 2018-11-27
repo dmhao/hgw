@@ -481,7 +481,37 @@
 			"path": "gopkg.in/yaml.v2",
 			"revision": "5420a8b6744d3b0345ab293f6fcba19c978f1183",
 			"revisionTime": "2018-03-28T19:50:20Z"
+		},
+		{
+			"checksumSHA1": "GiaTKzb5sV13aErxyilElbBXW6E=",
+			"path": "hgw/gateway/core",
+			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
+			"revisionTime": "2018-11-27T03:37:46Z"
+		},
+		{
+			"checksumSHA1": "ADvJIic2xKUXXPXiv5iqjj3dFDY=",
+			"path": "hgw/gateway/def",
+			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
+			"revisionTime": "2018-11-27T03:37:46Z"
+		},
+		{
+			"checksumSHA1": "eEqejDcIobESlxjZ76XCcgb53kY=",
+			"path": "hgw/gateway/lb",
+			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
+			"revisionTime": "2018-11-27T03:37:46Z"
+		},
+		{
+			"checksumSHA1": "+QydVKNS1R7D8DNfbZ6jQjeUSLw=",
+			"path": "hgw/gateway/middleware",
+			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
+			"revisionTime": "2018-11-27T03:37:46Z"
+		},
+		{
+			"checksumSHA1": "lEKOPR4puxPtdWIPoZAuBZ02ows=",
+			"path": "hgw/gateway/router",
+			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
+			"revisionTime": "2018-11-27T03:37:46Z"
 		}
 	],
-	"rootPath": "hgw/gateway"
+	"rootPath": "github.com/dmhao/hgw/gateway"
 }

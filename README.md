@@ -12,6 +12,13 @@ hgw通过【ETCD】存储服务数据，状态监控。
 6. 负载均衡
 7. 访问统计
 
+
+![metricspng](https://img.hacpai.com/pipe/450370050/450370050/450370050/4fce259c13ae47ce849d64a275479763.png)
+
+![domainpng](https://img.hacpai.com/pipe/450370050/450370050/450370050/8df958d3ece3464abd66dc1f898bc284.png)
+
+![pathpng](https://img.hacpai.com/pipe/450370050/450370050/450370050/822c490e98214b88bc23e0daa20c7b41.png)
+
 ## 安装
 #### 1. 获取hgw代码
 ```
