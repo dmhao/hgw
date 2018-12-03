@@ -12,15 +12,16 @@ import (
 var LbMap = map[string] bool {"roundRobin": true, "random": true}
 
 type Domain struct {
-	Id				string				`json:"id"`
-	DomainName		string				`json:"domain_name"`
-	DomainUrl		string				`json:"domain_url"`
-	LbType			string				`json:"lb_type"`
-	Targets			[]*Target			`json:"targets"`
-	BlackIps		map[string]bool 	`json:"black_ips"`
-	RateLimiterNum	float64				`json:"rate_limiter_num"`
-	RateLimiterMsg	string				`json:"rate_limiter_msg"`
-	SetTime			string				`json:"set_time"`
+	Id					string				`json:"id"`
+	DomainName			string				`json:"domain_name"`
+	DomainUrl			string				`json:"domain_url"`
+	LbType				string				`json:"lb_type"`
+	Targets				[]*Target			`json:"targets"`
+	BlackIps			map[string]bool 	`json:"black_ips"`
+	RateLimiterNum		float64				`json:"rate_limiter_num"`
+	RateLimiterMsg		string				`json:"rate_limiter_msg"`
+	RateLimiterEnabled	bool				`json:"rate_limiter_enabled"`
+	SetTime				string				`json:"set_time"`
 }
 
 type Target struct {
@@ -90,7 +91,7 @@ func DelDomain(c *gin.Context) {
 	mContext{c}.ErrorOP(SystemError)
 }
 
-func CreateDomain(c *gin.Context) {
+func PutDomain(c *gin.Context) {
 	domainUrl := c.PostForm("domain_url")
 	domainName := c.PostForm("domain_name")
 	lbType := c.PostForm("lb_type")
@@ -98,6 +99,8 @@ func CreateDomain(c *gin.Context) {
 	blackIpsJson := c.PostForm("black_ips")
 	rateLimiterNum := c.PostForm("rate_limiter_num")
 	rateLimiterMsg := c.PostForm("rate_limiter_msg")
+	rateLimiterEnabled := c.PostForm("rate_limiter_enabled")
+
 	if domainUrl == "" || domainName == "" || lbType == "" || proxyTargets == "" {
 		mContext{c}.ErrorOP(DataParseError)
 		return
@@ -149,6 +152,7 @@ func CreateDomain(c *gin.Context) {
 	domain.BlackIps = blackIps
 	domain.RateLimiterNum,_ = strconv.ParseFloat(rateLimiterNum, 10)
 	domain.RateLimiterMsg = rateLimiterMsg
+	domain.RateLimiterEnabled,_ = strconv.ParseBool(rateLimiterEnabled)
 	domain.SetTime = time.Now().Format("2006/1/2 15:04:05")
 
 	domainB, err := json.Marshal(domain)

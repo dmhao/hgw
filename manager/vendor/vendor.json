@@ -368,10 +368,10 @@
 			"revisionTime": "2018-03-28T19:50:20Z"
 		},
 		{
-			"checksumSHA1": "JEwlc+/ZVl6RHnC/8eZhkcyuaag=",
+			"checksumSHA1": "11CmdKiqJTV/6IfRm+RfCjh6JP0=",
 			"path": "hgw/manager/modules",
-			"revision": "425804bcdf1ae5f07cf3ee91b4a8559b60e1201e",
-			"revisionTime": "2018-11-27T02:06:07Z"
+			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
+			"revisionTime": "2018-12-03T08:42:05Z"
 		}
 	],
 	"rootPath": "github.com/dmhao/hgw/manager"

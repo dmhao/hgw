@@ -5,7 +5,6 @@ import (
 	"github.com/rcrowley/go-metrics"
 	"github.com/shirou/gopsutil/load"
 	"github.com/shirou/gopsutil/mem"
-	"hgw/gateway/def"
 	"time"
 )
 
@@ -24,12 +23,12 @@ type Metrics struct {
 	Histograms	metrics.Histogram
 }
 
-func NewDomainMetrics(domain *def.Domain) *Metrics {
+func NewDomainMetrics(domain *Domain) *Metrics {
 	m := metrics.NewPrefixedChildRegistry(hgwMetrics, domain.DomainUrl + "|-|" + "/*")
 	return initMetrics(m)
 }
 
-func NewDomainPathMetrics(domain *def.Domain, path *def.Path) *Metrics {
+func NewDomainPathMetrics(domain *Domain, path *Path) *Metrics {
 	m := metrics.NewPrefixedChildRegistry(hgwMetrics, domain.DomainUrl + "|-|" + path.ReqPath)
 	return initMetrics(m)
 }

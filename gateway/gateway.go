@@ -1,9 +1,11 @@
 package main
 
 import (
+	"crypto/tls"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"hgw/gateway/core"
 	"hgw/gateway/router"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -22,8 +24,8 @@ func (h *HgwGw) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 var (
 	version = "0.1"
 /*	serName = kingpin.Flag("ser-name", "SerName: gateway listen addr").Default("gateway-1").String()
-	addr = kingpin.Flag("addr", "Addr: gateway listen addr").Default("127.0.0.1:80").String()
-	tlsAddr = kingpin.Flag("tls-addr", "Tls-Addr: gateway tls listen addr").Default("").String()
+	addr = kingpin.Flag("addr", "Addr: gateway listen addr").Default(":80").String()
+	tlsAddr = kingpin.Flag("tls-addr", "Tls-Addr: gateway tls listen addr").Default(":443").String()
 	etcd = kingpin.Flag("etcd", "Addr: etcd server addr").Default("127.0.0.1:2379").String()
 	username = kingpin.Flag("u", "Username: etcd username").Default("").String()
 	password = kingpin.Flag("p", "Password: etcd password").Default("").String()*/
@@ -66,12 +68,7 @@ func main() {
 	}
 
 	if *tlsAddr != "" {
-		go func() {
-			err = http.ListenAndServeTLS(*tlsAddr, "server.crt", "server.key", &HgwGw{})
-			if err != nil {
-				core.Sys().Fatalln("端口80启动监听失败", err)
-			}
-		}()
+		go runTls(*tlsAddr, &HgwGw{})
 	}
 
 	go core.RecordMetrics(*serName)
@@ -93,10 +90,27 @@ func main() {
 }
 
 
+func runTls(addr string, handler http.Handler) {
+	ls, err := net.Listen("tcp", addr)
+	if err != nil {
+		core.Sys().Fatalln("tls ",addr,"监听失败", err)
+	}
+	core.InitCerts()
+	go core.CertsChangeListen()
+
+	//设置获取证书的方法
+	tlsListener := tls.NewListener(ls, &tls.Config{GetCertificate: core.GetCert})
+	//设置处理的handler方法
+	ser := http.Server{Handler: handler}
+	core.Sys().Infof("GateWay启动 服务地址：%s", addr)
+	err = ser.Serve(tlsListener)
+	if err != nil {
+		core.Sys().Fatalln("tls ",addr,"关闭", err)
+	}
+}
+
 func registerGateWay() {
-	core.Sys().Infoln("注册网关")
 }
 
 func unRegisterGateWay() {
-	core.Sys().Infoln("注销网关")
 }

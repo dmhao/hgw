@@ -196,6 +196,12 @@
 			"revisionTime": "2018-04-15T19:51:42Z"
 		},
 		{
+			"checksumSHA1": "d6BycwPpKXW09I/tXMqcItE8SA4=",
+			"path": "github.com/pkg/errors",
+			"revision": "816c9085562cd7ee03e7f8188a1cfd942858cded",
+			"revisionTime": "2018-03-11T21:45:15Z"
+		},
+		{
 			"checksumSHA1": "qQ7JvX2bms98tubDQmfWt19Z/Tc=",
 			"path": "github.com/rcrowley/go-metrics",
 			"revision": "d932a24a8ccb8fcadc993e5c6c58f93dac168294",
@@ -483,34 +489,28 @@
 			"revisionTime": "2018-03-28T19:50:20Z"
 		},
 		{
-			"checksumSHA1": "GiaTKzb5sV13aErxyilElbBXW6E=",
+			"checksumSHA1": "29ZzHRBeNIgN6wqnpf09nM8toWA=",
 			"path": "hgw/gateway/core",
-			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
-			"revisionTime": "2018-11-27T03:37:46Z"
+			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
+			"revisionTime": "2018-12-03T08:42:05Z"
 		},
 		{
-			"checksumSHA1": "ADvJIic2xKUXXPXiv5iqjj3dFDY=",
-			"path": "hgw/gateway/def",
-			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
-			"revisionTime": "2018-11-27T03:37:46Z"
-		},
-		{
-			"checksumSHA1": "eEqejDcIobESlxjZ76XCcgb53kY=",
+			"checksumSHA1": "nkdjKuVSjaBQV+aQtJ8XEVyUu6I=",
 			"path": "hgw/gateway/lb",
-			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
-			"revisionTime": "2018-11-27T03:37:46Z"
+			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
+			"revisionTime": "2018-12-03T08:42:05Z"
 		},
 		{
-			"checksumSHA1": "+QydVKNS1R7D8DNfbZ6jQjeUSLw=",
+			"checksumSHA1": "bwqxNkQNFUcicYGhl+g465KiBUQ=",
 			"path": "hgw/gateway/middleware",
-			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
-			"revisionTime": "2018-11-27T03:37:46Z"
+			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
+			"revisionTime": "2018-12-03T08:42:05Z"
 		},
 		{
-			"checksumSHA1": "lEKOPR4puxPtdWIPoZAuBZ02ows=",
+			"checksumSHA1": "E4iQEyxfGUn+CzLZawoFB0tkf2E=",
 			"path": "hgw/gateway/router",
-			"revision": "3368548eebd2960b971f39cdfaf3d8ca3663d3a6",
-			"revisionTime": "2018-11-27T03:37:46Z"
+			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
+			"revisionTime": "2018-12-03T08:42:05Z"
 		}
 	],
 	"rootPath": "github.com/dmhao/hgw/gateway"

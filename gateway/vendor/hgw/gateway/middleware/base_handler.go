@@ -3,7 +3,6 @@ package middleware
 import (
 	"github.com/didip/tollbooth/limiter"
 	"hgw/gateway/core"
-	"hgw/gateway/def"
 	"hgw/gateway/lb"
 	"net/http"
 	"time"
@@ -16,8 +15,8 @@ const (
 
 type Base struct {
 	HandlerType		int8
-	Domain			*def.Domain
-	Path			*def.Path
+	Domain			*core.Domain
+	Path			*core.Path
 	lb				lb.LoadBalance
 	lmt				*limiter.Limiter
 	mt				*core.Metrics
@@ -25,14 +24,14 @@ type Base struct {
 
 type Baser interface {
 	GetHandlerType() int8
-	GetDomain() *def.Domain
-	GetPath()	*def.Path
+	GetDomain() *core.Domain
+	GetPath()	*core.Path
 	GetLb() 	lb.LoadBalance
 	GetLmt()	*limiter.Limiter
 	GetMt()		*core.Metrics
 	SetHandlerType(int8)
-	SetDomain(*def.Domain)
-	SetPath(*def.Path)
+	SetDomain(*core.Domain)
+	SetPath(*core.Path)
 	SetLb(lb.LoadBalance)
 	SetLmt(*limiter.Limiter)
 	SetMt(*core.Metrics)
@@ -42,11 +41,11 @@ func (mw *Base) GetHandlerType() int8 {
 	return mw.HandlerType
 }
 
-func(mw *Base) GetDomain() *def.Domain {
+func(mw *Base) GetDomain() *core.Domain {
 	return mw.Domain
 }
 
-func (mw *Base) GetPath() *def.Path {
+func (mw *Base) GetPath() *core.Path {
 	return mw.Path
 }
 
@@ -66,11 +65,11 @@ func (mw *Base) SetHandlerType(i int8) {
 	mw.HandlerType = i
 }
 
-func (mw *Base) SetDomain(d *def.Domain) {
+func (mw *Base) SetDomain(d *core.Domain) {
 	mw.Domain = d
 }
 
-func (mw *Base) SetPath(p *def.Path) {
+func (mw *Base) SetPath(p *core.Path) {
 	mw.Path = p
 }
 

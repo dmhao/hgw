@@ -1,13 +1,13 @@
 package lb
 
 import (
-	"hgw/gateway/def"
+	"hgw/gateway/core"
 	"sync"
 )
 
 
 
-func NewWeightRoundRobin(s []*def.Target) LoadBalance {
+func NewWeightRoundRobin(s []*core.Target) LoadBalance {
 	for _, target := range s {
 		if target.Weight == 0 {
 			target.Weight = 1
@@ -26,7 +26,7 @@ func NewWeightRoundRobin(s []*def.Target) LoadBalance {
 
 type safeTargets struct {
 	mtx			*sync.Mutex
-	targets		[]*def.Target
+	targets		[]*core.Target
 }
 
 type weightRoundRobin struct {
@@ -53,7 +53,7 @@ func (wrr *weightRoundRobin) getNextPointerIndex() int {
 	return index
 }
 
-func (wrr *weightRoundRobin) Target() (*def.Target, error) {
+func (wrr *weightRoundRobin) Target() (*core.Target, error) {
 	index := wrr.getNextPointerIndex()
 	return wrr.s.targets[index], nil
 }

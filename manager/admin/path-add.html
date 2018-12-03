@@ -59,7 +59,14 @@
                        class="layui-input" placeholder="超时时间(单位毫秒)" >
             </div>
             <div class="layui-input-inline">
-                <input type="checkbox" id="circuit_breaker" name="circuit_breaker" verify="circuitBreakerSwitch"
+                <label class="layui-form-label">开启熔断</label>
+                <input type="checkbox" id="circuit_breaker_enabled" name="circuit_breaker_enabled" verify="circuitBreakerSwitch"
+                       lay-skin="switch" lay-text="ON|OFF">
+            </div>
+
+            <div class="layui-input-inline">
+                <label class="layui-form-label">强制熔断</label>
+                <input type="checkbox" id="circuit_breaker_force" name="circuit_breaker_force"
                        lay-skin="switch" lay-text="ON|OFF">
             </div>
         </div>
@@ -99,14 +106,14 @@
                 }
             },
             circuitBreaker: function(value) {
-                if($("#circuit_breaker").is(':checked')) {
-                    if (!new RegExp("^[0-9]+$").test(value)) {
+                if($("#circuit_breaker_enabled").is(':checked')) {
+                    if (!new RegExp("^(0|[1-9][0-9]*)$").test(value)) {
                         return '请输入正整数';
                     }
                 }
             },
             circuitBreakerSwitch: function (value) {
-                if($("#circuit_breaker").is(':checked')) {
+                if($("#circuit_breaker_enabled").is(':checked')) {
                     var circuit_breaker_request = $("#circuit_breaker_request").val();
                     var circuit_breaker_percent = $("#circuit_breaker_percent").val();
                     if(circuit_breaker_request <= 0 || circuit_breaker_percent <= 0) {
@@ -122,6 +129,8 @@
             var circuit_breaker_percent = $("#circuit_breaker_percent").val();
             var circuit_breaker_timeout = $("#circuit_breaker_timeout").val();
             var circuit_breaker_msg = $("#circuit_breaker_msg").val();
+            var circuit_breaker_enabled = $("#circuit_breaker_enabled").is(':checked');
+            var circuit_breaker_force = $("#circuit_breaker_force").is(':checked');
 
             var params = {
                 req_path: req_path,
@@ -130,6 +139,8 @@
                 circuit_breaker_percent: circuit_breaker_percent,
                 circuit_breaker_timeout: circuit_breaker_timeout,
                 circuit_breaker_msg: circuit_breaker_msg,
+                circuit_breaker_enabled: circuit_breaker_enabled,
+                circuit_breaker_force: circuit_breaker_force,
             };
 
             request("POST", HGW_MANAGE_API + "domains/"+domain_id+"/paths/", "json", false, params,

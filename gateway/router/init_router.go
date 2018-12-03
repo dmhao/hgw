@@ -6,7 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-chi/chi"
 	"hgw/gateway/core"
-	"hgw/gateway/def"
 	"hgw/gateway/middleware"
 	"net/http"
 	"strings"
@@ -46,7 +45,7 @@ func InitHs() error {
 }
 
 //重新加载路由数据
-func reloadHs(domainsData []*def.Domain) {
+func reloadHs(domainsData []*core.Domain) {
 	newHsMux := make(HostSwitch)
 	for _,domain := range domainsData {
 		if _,ok := newHsMux[domain.DomainUrl]; !ok {
@@ -78,7 +77,7 @@ func initRouter(domainId string) error {
 	return nil
 }
 
-func reloadRouter(domain *def.Domain) {
+func reloadRouter(domain *core.Domain) {
 	mux := chi.NewMux()
 	mux.Handle("/*", middleware.CreateMwChain(domain))
 	if len(domain.Paths) > 0 {
@@ -92,13 +91,13 @@ func reloadRouter(domain *def.Domain) {
 
 func WatchDomainChange() {
 	core.Sys().Infof("启动域名路径变动监听")
-	go pathChange()
+	go pathChangeListen()
 	core.Sys().Infof("启动域名变动监听")
-	go domainChange()
+	go domainChangeListen()
 }
 
 //路径变动更新路由
-func pathChange() {
+func pathChangeListen() {
 	ech := make(chan *clientv3.Event, 100)
 	go core.WatchPaths(ech)
 	for{
@@ -123,7 +122,7 @@ func pathChange() {
 					hsMux[domain.DomainUrl] = tmpMux
 				}
 				if mux, ok := hsMux[domain.DomainUrl]; ok {
-					pathDef := new(def.Path)
+					pathDef := new(core.Path)
 					err := json.Unmarshal(ev.Kv.Value, pathDef)
 					core.Sys().Warnf("【域名%s】路径更新，json解析失败 %q", domainId, ev.Kv.Value)
 					if err != nil {
@@ -137,7 +136,7 @@ func pathChange() {
 }
 
 //域名变动更新路由
-func domainChange() {
+func domainChangeListen() {
 	ech := make(chan *clientv3.Event, 100)
 	go core.WatchDomains(ech)
 	for{
@@ -147,7 +146,7 @@ func domainChange() {
 				domainBakPath := core.DomainToBakDomainPath(string(ev.Kv.Key))
 				domain,err  := core.DomainDataByPath(domainBakPath, false)
 				if err != nil {
-					core.Sys().Warnf("【域名%s】删除-获取备份数据失败")
+					core.Sys().Warnf("【域名路径%s】删除-获取备份数据失败", string(ev.Kv.Key))
 					continue
 				}
 				hsMux := GetHs()
@@ -157,7 +156,7 @@ func domainChange() {
 				var domainId string
 				keySplit := strings.Split(string(ev.Kv.Key), "/")
 				domainId = keySplit[3]
-				domain := new(def.Domain)
+				domain := new(core.Domain)
 				err := json.Unmarshal(ev.Kv.Value, domain)
 				if err != nil {
 					core.Sys().Warnf("【域名%s】更新，json解析失败 %q", domainId, ev.Kv.Value)

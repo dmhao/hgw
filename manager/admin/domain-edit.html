@@ -65,7 +65,8 @@
                        class="layui-input" placeholder="每（秒）请求数" lay-verify="rateLimiter">
             </div>
             <div class="layui-input-inline">
-                <input type="checkbox" id="rate_limiter" name="rate_limiter" lay-skin="switch" lay-text="ON|OFF">
+                <label class="layui-form-label">限流开启</label>
+                <input type="checkbox" id="rate_limiter_enabled" name="rate_limiter_enabled" lay-skin="switch" lay-text="ON|OFF">
             </div>
         </div>
         <div class="layui-form-item">
@@ -112,11 +113,12 @@
                     $("#domain_name").val(rsp.data.domain_name);
                     $("#domain_url").val("http://"+rsp.data.domain_url);
                     $("#lb_type").val(rsp.data.lb_type);
-                    if(rsp.data.rate_limiter_num) {
-                        $("#rate_limiter").attr("checked", "checked");
-                        $("#rate_limiter_num").val(rsp.data.rate_limiter_num);
-                        $("#rate_limiter_msg").val(rsp.data.rate_limiter_msg);
+                    $("#rate_limiter_num").val(rsp.data.rate_limiter_num);
+                    $("#rate_limiter_msg").val(rsp.data.rate_limiter_msg);
+                    if(rsp.data.rate_limiter_enabled) {
+                        $("#rate_limiter_enabled").attr("checked", "checked");
                     }
+
 
                     black_ips = rsp.data.black_ips;
                     proxy_targets = rsp.data.targets;
@@ -214,8 +216,8 @@
                 }
             },
             rateLimiter: function(value) {
-                if($("#rate_limiter").is(':checked')) {
-                    if (!new RegExp("^[0-9]+$").test(value)) {
+                if($("#rate_limiter_enabled").is(':checked')) {
+                    if (!new RegExp("^(0|[1-9][0-9]*)$").test(value)) {
                         return '请输入正整数';
                     }
                 }
@@ -227,6 +229,7 @@
             var lb_type = $("#lb_type").val();
             var rate_limiter_num = $("#rate_limiter_num").val();
             var rate_limiter_msg = $("#rate_limiter_msg").val();
+            var rate_limiter_enabled = $("#rate_limiter_enabled").is(':checked');
 
             var params = {
                 domain_name: domain_name,
@@ -235,7 +238,8 @@
                 proxy_targets: JSON.stringify(proxy_targets),
                 black_ips: Object.keys(black_ips).length > 0 ? JSON.stringify(black_ips) : '',
                 rate_limiter_num: rate_limiter_num,
-                rate_limiter_msg: rate_limiter_msg
+                rate_limiter_msg: rate_limiter_msg,
+                rate_limiter_enabled: rate_limiter_enabled
             };
 
             request("POST", HGW_MANAGE_API + "domains/"+domain_id, "json", false, params,

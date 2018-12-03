@@ -3,7 +3,6 @@ package middleware
 import (
 	"github.com/justinas/alice"
 	"hgw/gateway/core"
-	"hgw/gateway/def"
 	"net/http"
 )
 
@@ -17,13 +16,13 @@ func mwList(chain *[]alice.Constructor, hd func(http.Handler) http.Handler) bool
 	return true
 }
 
-func CreateMwChain(domain *def.Domain) http.Handler {
+func CreateMwChain(domain *core.Domain) http.Handler {
 	baseMw := &Base{Domain: domain, HandlerType: DomainHandler}
 	baseMw.SetMt(core.NewDomainMetrics(domain))
 	return createMwChain(baseMw)
 }
 
-func CreatePathMwChain(domain *def.Domain, path *def.Path) http.Handler {
+func CreatePathMwChain(domain *core.Domain, path *core.Path) http.Handler {
 	baseMw := &Base{Domain: domain, Path: path, HandlerType: DomainPathHandler}
 	baseMw.SetMt(core.NewDomainPathMetrics(domain, path))
 	return createMwChain(baseMw)

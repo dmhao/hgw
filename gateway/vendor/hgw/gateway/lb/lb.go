@@ -2,9 +2,9 @@ package lb
 
 import (
 	"errors"
-	"hgw/gateway/def"
+	"hgw/gateway/core"
 )
 type LoadBalance interface {
-	Target() (*def.Target, error)
+	Target() (*core.Target, error)
 }
 var ErrNoPointer = errors.New("no endpoints available")

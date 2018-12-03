@@ -1,11 +1,11 @@
 package lb
 
 import (
-	"hgw/gateway/def"
+	"hgw/gateway/core"
 	"math/rand"
 )
 
-func NewRandom(s []*def.Target, seed int64) LoadBalance {
+func NewRandom(s []*core.Target, seed int64) LoadBalance {
 	return &random{
 		s: s,
 		r: rand.New(rand.NewSource(seed)),
@@ -14,12 +14,12 @@ func NewRandom(s []*def.Target, seed int64) LoadBalance {
 }
 
 type random struct {
-	s []*def.Target
+	s []*core.Target
 	r *rand.Rand
 	l int
 }
 
-func (r *random) Target() (*def.Target, error) {
+func (r *random) Target() (*core.Target, error) {
 	if len(r.s) <= 0 {
 		return nil, ErrNoPointer
 	}

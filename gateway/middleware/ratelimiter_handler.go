@@ -11,7 +11,7 @@ type RateLimiterMw struct {
 
 func (mw *RateLimiterMw) Init() func(http.Handler) http.Handler {
 	if mw.GetLmt() == nil {
-		if mw.GetDomain().RateLimiterNum > 0 {
+		if mw.GetDomain().RateLimiterEnabled && mw.GetDomain().RateLimiterNum > 0 {
 			mw.SetLmt(tollbooth.NewLimiter(mw.GetDomain().RateLimiterNum, nil))
 		}
 	}

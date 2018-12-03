@@ -33,17 +33,23 @@ func main() {
 
 	v1 := r.Group("/v1", modules.AuthHandler)
 
-	v1.POST("/domains/", modules.CreateDomain)
+	v1.POST("/domains/", modules.PutDomain)
 	v1.GET("/domains/", modules.Domains)
-	v1.POST("/domains/:domain_id", modules.CreateDomain)
+	v1.POST("/domains/:domain_id", modules.PutDomain)
 	v1.GET("/domains/:domain_id", modules.GetDomain)
 	v1.DELETE("/domains/:domain_id", modules.DelDomain)
 
-	v1.POST("/domains/:domain_id/paths/", modules.CreatePath)
-	v1.POST("/domains/:domain_id/paths/:path_id", modules.CreatePath)
+	v1.POST("/domains/:domain_id/paths/", modules.PutPath)
+	v1.POST("/domains/:domain_id/paths/:path_id", modules.PutPath)
 	v1.GET("/domains/:domain_id/paths/", modules.Paths)
 	v1.GET("/domains/:domain_id/paths/:path_id", modules.GetPath)
 	v1.DELETE("/domains/:domain_id/paths/:path_id", modules.DelPath)
+
+
+	v1.POST("/certs/", modules.PutCert)
+	v1.GET("/certs/", modules.Certs)
+	v1.POST("/certs/:cert_id", modules.PutCert)
+	v1.DELETE("/certs/:cert_id", modules.DelCert)
 
 	v1.GET("/gateways/", modules.Gateways)
 	v1.GET("/gateways/:server_name", modules.Gateway)

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="./css/font.css">
+    <link rel="stylesheet" href="./css/xadmin.css">
+    <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
+    <!--[if lt IE 9]>
+    <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
+    <script src="https://cdn.staticfile.org/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body class="layui-anim layui-anim-up">
+<div class="x-body">
+    <xblock>
+        <button class="layui-btn" onclick="cert_add()"><i class="layui-icon"></i>添加证书</button>
+    </xblock>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th width="25%">ID</th>
+            <th>域名</th>
+            <th>创建日期</th>
+            <th width="25%">操作</th>
+        </tr>
+        </thead>
+        <tbody id="certs_list">
+
+        </tbody>
+    </table>
+</div>
+
+<div id="add_html" style="display: none;">
+    <div class="x-body">
+        <form class="layui-form" id="add" name="add">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="x-red">*</span>域名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="add_ser_name" name="add_ser_name" placeholder="证书对应的域名"
+                           lay-verify="required" class="layui-input" >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="x-red">*</span>证书cert</label>
+                <div class="layui-input-block">
+                    <textarea name="add_cert_block" id="add_cert_block"  lay-verify="required" placeholder="证书cert" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="x-red">*</span>证书key</label>
+                <div class="layui-input-block">
+                    <textarea name="add_cert_key_block" id="add_cert_key_block" lay-verify="required" placeholder="证书key" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-submit lay-filter="add_sub">提交</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="edit_html" style="display: none">
+    <div class="x-body">
+        <form class="layui-form" id="edit" name="edit">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="x-red">*</span>域名</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="edit_ser_name" name="edit_ser_name" placeholder="证书对应的域名"
+                           lay-verify="required" class="layui-input" disabled >
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="x-red">*</span>证书cert</label>
+                <div class="layui-input-block">
+                    <textarea name="edit_cert_block" id="edit_cert_block"  lay-verify="required" placeholder="证书cert" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="x-red">*</span>证书key</label>
+                <div class="layui-input-block">
+                    <textarea name="edit_cert_key_block" id="edit_cert_key_block" lay-verify="required" placeholder="证书key" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_repass" class="layui-form-label">
+                </label>
+                <button class="layui-btn" lay-submit lay-filter="edit_sub">提交</button>
+            </div>
+            <input type="hidden" name="cert_id" id="cert_id">
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="./lib/layui/layui.js" charset="utf-8"></script>
+<script type="text/javascript" src="./js/xadmin.js"></script>
+<script type="text/javascript" src="./js/admin.js"></script>
+<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script>
+    var certs_data = [];
+    $(document).ready(function(){
+        request("GET", HGW_MANAGE_API + "certs/", "json", false, {},
+            function(rsp) {
+                var list_html = "";
+                if(rsp.status == 1) {
+                    certs_data = rsp.data;
+                    for(var i=0; i< rsp.data.length; i++) {
+                        list_html += "<tr class=\"text-c\">"
+                        list_html += "<td>"+rsp.data[i].id+"</td>"
+                        list_html += "<td>"+rsp.data[i].ser_name+"</td>"
+                        list_html += "<td>"+rsp.data[i].set_time+"</td>"
+                        list_html += "<td class=\"f-14 td-manage\"> " +
+                                "<a onClick=\"cert_edit(this,"+i+")\" title=\"编辑\">编辑" +
+                                "</a>&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                "<a onClick=\"cert_del(this,"+i+")\" title=\"删除\">删除" +
+                                "</a>&nbsp;&nbsp;" +
+                                "</td>"
+                        list_html += "</tr>"
+                    }
+                }
+                $("#certs_list").html(list_html);
+                $('.layui-table').dataTable({
+                    "bStateSave": true,//状态保存
+                    "pading":false,
+                    "searching": false,
+                    "lengthChange" : false,
+                });
+            });
+    });
+
+    function refresh() {
+        location.replace(location.href);
+    }
+
+    function cert_add() {
+        layer.open({
+            area: ['80%', '95%'],
+            type: 1,
+            id: "cert_add",
+            content: $("#add_html"),
+        });
+    }
+
+    function cert_edit(obj, i) {
+        if(certs_data.length == 0) return false;
+        $("#edit_cert_block").val(certs_data[i].cert_block);
+        $("#edit_cert_key_block").val(certs_data[i].cert_key_block);
+        $("#edit_ser_name").val(certs_data[i].ser_name);
+        $("#cert_id").val(certs_data[i].id);
+        layer.open({
+            area: ['80%', '95%'],
+            type: 1,
+            id: "cert_edit",
+            content: $("#edit_html"),
+        });
+    }
+
+
+    /*路径设置-删除*/
+    function cert_del(obj,i){
+        if(certs_data.length == 0) return false;
+        var cert_id = certs_data[i].id;
+        if(cert_id != "") {
+            layer.confirm('确认要删除吗？', function (index) {
+                request("DELETE", HGW_MANAGE_API + "certs/" + cert_id, "json", false, {},
+                    function (rsp) {
+                        if (rsp.status == 1) {
+                            layer.msg('成功', {
+                                icon: 1,
+                                time: 800
+                            }, function () {
+                                refresh();
+                            });
+                        } else {
+                            layer.alert("失败");
+                        }
+                    });
+            });
+        }
+    }
+
+
+    layui.use(['form','layer'], function(){
+        var form = layui.form,layer = layui.layer;
+        form.on('submit(add_sub)', function(data){
+            var cert_block = $("#add_cert_block").val();
+            var cert_key_block = $("#add_cert_key_block").val();
+            var ser_name = $("#add_ser_name").val();
+            var params = {
+                "cert_block": cert_block,
+                "cert_key_block": cert_key_block,
+                "ser_name": ser_name
+            };
+            request("POST", HGW_MANAGE_API + "certs/", "json", false, params,
+                function (rsp) {
+                    if (rsp.status == 1) {
+                        layer.alert("增加成功", {icon: 6}, function () {
+                            refresh();
+                        });
+                    } else {
+                        layer.alert("增加失败，请核对内容");
+                    }
+                });
+            return false;
+        });
+
+        form.on('submit(edit_sub)', function(data){
+            var cert_block = $("#edit_cert_block").val();
+            var cert_key_block = $("#edit_cert_key_block").val();
+            var ser_name = $("#edit_ser_name").val();
+            var cert_id = $("#cert_id").val();
+            var params = {
+                "cert_block": cert_block,
+                "cert_key_block": cert_key_block,
+                "ser_name": ser_name
+            };
+            request("POST", HGW_MANAGE_API + "certs/"+cert_id, "json", false, params,
+                function (rsp) {
+                    if (rsp.status == 1) {
+                        layer.alert("修改成功", {icon: 6}, function () {
+                            refresh();
+                        });
+                    } else {
+                        layer.alert("修改失败，请核对内容");
+                    }
+                });
+            return false;
+        });
+    });
+
+</script>
+</body>
+
+</html>

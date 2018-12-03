@@ -1,11 +1,11 @@
 package lb
 
 import (
-	"hgw/gateway/def"
+	"hgw/gateway/core"
 	"sync/atomic"
 )
 
-func NewRoundRobin(s []*def.Target) LoadBalance {
+func NewRoundRobin(s []*core.Target) LoadBalance {
 	return &roundRobin{
 		s: s,
 		c: new(uint64),
@@ -14,13 +14,13 @@ func NewRoundRobin(s []*def.Target) LoadBalance {
 }
 
 type roundRobin struct {
-	s []*def.Target
+	s []*core.Target
 	c *uint64
 	l int
 }
 
 
-func (rr *roundRobin) Target() (*def.Target, error) {
+func (rr *roundRobin) Target() (*core.Target, error) {
 	if rr.l <= 0 {
 		return nil, ErrNoPointer
 	}

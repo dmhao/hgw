@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"hgw/gateway/def"
+	"hgw/gateway/core"
 	"net/http"
 	"time"
 )
@@ -14,7 +14,7 @@ type hgwResponse struct {
 	pErrorChan		chan error
 	pSuccessChan	chan bool
 	pUseTime		time.Duration
-	pTarget			*def.Target
+	pTarget			*core.Target
 }
 
 type hgwResponseWriter interface {
@@ -25,8 +25,8 @@ type hgwResponseWriter interface {
 	StartTime()	time.Time
 	SetProxyUseTime(time.Duration)
 	ProxyUseTime() time.Duration
-	SetProxyTarget(*def.Target)
-	ProxyTarget() *def.Target
+	SetProxyTarget(*core.Target)
+	ProxyTarget() *core.Target
 }
 
 func (mw *hgwResponse) Header() http.Header {
@@ -72,10 +72,10 @@ func (mw *hgwResponse) ProxyUseTime() time.Duration {
 	return mw.pUseTime
 }
 
-func (mw *hgwResponse) SetProxyTarget(t *def.Target) {
+func (mw *hgwResponse) SetProxyTarget(t *core.Target) {
 	mw.pTarget = t
 }
 
-func (mw *hgwResponse) ProxyTarget() *def.Target {
+func (mw *hgwResponse) ProxyTarget() *core.Target {
 	return mw.pTarget
 }

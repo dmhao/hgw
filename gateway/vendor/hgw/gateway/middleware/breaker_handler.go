@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/afex/hystrix-go/hystrix"
+	"hgw/gateway/core"
 	"net/http"
 )
 
@@ -10,10 +11,10 @@ type BreakerMw struct {
 }
 
 func (mw *BreakerMw) Init() func(http.Handler) http.Handler {
-	path := mw.GetPath()
 	handlerType := mw.GetHandlerType()
-	if handlerType == DomainPathHandler && path != nil {
-		if path.CircuitBreakerRequest > 0 && path.CircuitBreakerPercent > 0 {
+	if handlerType == DomainPathHandler {
+		path := mw.GetPath()
+		if path.CircuitBreakerEnabled {
 			cmdConf := hystrix.CommandConfig{
 				MaxConcurrentRequests: path.CircuitBreakerRequest,
 				ErrorPercentThreshold: path.CircuitBreakerPercent,
@@ -27,27 +28,48 @@ func (mw *BreakerMw) Init() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 			path := mw.GetPath()
-			if path != nil && path.CircuitBreakerRequest > 0 && path.CircuitBreakerPercent > 0  {
-				hgwResponse := rw.(hgwResponseWriter)
-				hystrix.Do(path.Id, func() error {
-					next.ServeHTTP(rw, r)
-					select {
-					case <-hgwResponse.ProxySuccessChan():
-						return nil
-					case err := <-hgwResponse.ProxyErrorChan():
-						return err
-					}
-				}, func(err error) error {
-					rw.WriteHeader(http.StatusOK)
-					rw.Write([]byte(path.CircuitBreakerMsg))
-					return err
-				})
-
-			} else {
+			if path == nil {
 				next.ServeHTTP(rw, r)
+			} else {
+				if path.CircuitBreakerForce {
+					breakerResponse(rw, path)
+				} else {
+					if path.CircuitBreakerEnabled {
+						hystrix.NewStreamHandler()
+						hgwResponse := rw.(hgwResponseWriter)
+						_ = hystrix.Do(path.Id, func() error {
+							next.ServeHTTP(rw, r)
+							select {
+							case <-hgwResponse.ProxySuccessChan():
+								return nil
+							case err := <-hgwResponse.ProxyErrorChan():
+								return err
+							}
+						}, func(err error) error {
+							err.Error()
+							breakerResponse(rw, path)
+							return err
+						})
+
+					} else {
+						next.ServeHTTP(rw, r)
+					}
+				}
 			}
+
 		})
 	}
+}
+
+var defaultCircuitBreakerMsg = "CircuitBreaker"
+
+func breakerResponse(rw http.ResponseWriter, path *core.Path) {
+	breakerMsg := defaultCircuitBreakerMsg
+	if path.CircuitBreakerMsg != "" {
+		breakerMsg = path.CircuitBreakerMsg
+	}
+	rw.WriteHeader(http.StatusOK)
+	_,_ = rw.Write([]byte(breakerMsg))
 }
 
 

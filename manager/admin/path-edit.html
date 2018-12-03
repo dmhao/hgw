@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="layui-form-item">
-            <label for="lb" class="layui-form-label">熔断</label>
+            <label class="layui-form-label">熔断</label>
             <div class="layui-input-inline">
                 <input type="text" id="circuit_breaker_request" name="circuit_breaker_request"
                        class="layui-input" placeholder="请求数" lay-verify="circuitBreaker">
@@ -59,7 +59,14 @@
                        class="layui-input" placeholder="超时时间(单位毫秒)" >
             </div>
             <div class="layui-input-inline">
-                <input type="checkbox" id="circuit_breaker" name="circuit_breaker" verify="circuitBreakerSwitch"
+                <label class="layui-form-label">开启熔断</label>
+                <input type="checkbox" id="circuit_breaker_enabled" name="circuit_breaker_enabled" verify="circuitBreakerSwitch"
+                       lay-skin="switch" lay-text="ON|OFF">
+            </div>
+
+            <div class="layui-input-inline">
+                <label class="layui-form-label">强制熔断</label>
+                <input type="checkbox" id="circuit_breaker_force" name="circuit_breaker_force"
                        lay-skin="switch" lay-text="ON|OFF">
             </div>
         </div>
@@ -109,8 +116,11 @@
                     if(rsp.data.circuit_breaker_msg != "") {
                         $("#circuit_breaker_msg").val(rsp.data.circuit_breaker_msg);
                     }
-                    if(rsp.data.circuit_breaker_request && rsp.data.circuit_breaker_percent) {
-                        $("#circuit_breaker").attr("checked", "checked");
+                    if(rsp.data.circuit_breaker_enabled) {
+                        $("#circuit_breaker_enabled").attr("checked", "checked");
+                    }
+                    if(rsp.data.circuit_breaker_force) {
+                        $("#circuit_breaker_force").attr("checked", "checked");
                     }
                 } else {
                     layer.alert("数据异常", {icon: 6}, function () {
@@ -125,14 +135,14 @@
         var form = layui.form,layer = layui.layer;
         form.verify({
             circuitBreaker: function(value) {
-                if($("#circuit_breaker").is(':checked')) {
-                    if (!new RegExp("^[0-9]+$").test(value)) {
+                if($("#circuit_breaker_enabled").is(':checked')) {
+                    if (!new RegExp("^(0|[1-9][0-9]*)$").test(value)) {
                         return '请输入正整数';
                     }
                 }
             },
             circuitBreakerSwitch: function (value) {
-                if($("#circuit_breaker").is(':checked')) {
+                if($("#circuit_breaker_enabled").is(':checked')) {
                     var circuit_breaker_request = $("#circuit_breaker_request").val();
                     var circuit_breaker_percent = $("#circuit_breaker_percent").val();
                     if(circuit_breaker_request <= 0 || circuit_breaker_percent <= 0) {
@@ -148,14 +158,18 @@
             var circuit_breaker_percent = $("#circuit_breaker_percent").val();
             var circuit_breaker_timeout = $("#circuit_breaker_timeout").val();
             var circuit_breaker_msg = $("#circuit_breaker_msg").val();
+            var circuit_breaker_enabled = $("#circuit_breaker_enabled").is(':checked');
+            var circuit_breaker_force = $("#circuit_breaker_force").is(':checked');
 
             var params = {
                 req_path: req_path,
                 req_method: req_method,
-                circuit_breaker_request: $("#circuit_breaker").is(':checked') ? circuit_breaker_request : 0,
-                circuit_breaker_percent: $("#circuit_breaker").is(':checked') ? circuit_breaker_percent : 0,
+                circuit_breaker_request: circuit_breaker_request,
+                circuit_breaker_percent: circuit_breaker_percent,
                 circuit_breaker_timeout: circuit_breaker_timeout,
                 circuit_breaker_msg: circuit_breaker_msg,
+                circuit_breaker_enabled: circuit_breaker_enabled,
+                circuit_breaker_force: circuit_breaker_force,
             };
             request("POST", HGW_MANAGE_API + "domains/"+domain_id+"/paths/"+path_id, "json", false, params,
                 function(rsp) {

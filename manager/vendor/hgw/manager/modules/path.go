@@ -16,6 +16,8 @@ type Path struct {
 	CircuitBreakerPercent	int			`json:"circuit_breaker_percent"`
 	CircuitBreakerTimeout	int			`json:"circuit_breaker_timeout"`
 	CircuitBreakerMsg		string		`json:"circuit_breaker_msg"`
+	CircuitBreakerEnabled	bool		`json:"circuit_breaker_enabled"`
+	CircuitBreakerForce		bool		`json:"circuit_breaker_force"`
 	SetTime					string		`json:"set_time"`
 }
 
@@ -46,7 +48,7 @@ func Paths(c *gin.Context) {
 	mContext{c}.SuccessOP(make([]string, 0))
 }
 
-func CreatePath(c *gin.Context) {
+func PutPath(c *gin.Context) {
 	domainId := c.Param("domain_id")
 	reqMethod := c.PostForm("req_method")
 	reqPath := c.PostForm("req_path")
@@ -54,6 +56,8 @@ func CreatePath(c *gin.Context) {
 	cbPercent := c.PostForm("circuit_breaker_percent")
 	cbTimeout := c.PostForm("circuit_breaker_timeout")
 	cbMsg := c.PostForm("circuit_breaker_msg")
+	cbEnabled := c.PostForm("circuit_breaker_enabled")
+	cbForce := c.PostForm("circuit_breaker_force")
 
 	if reqMethod == "" || reqPath == "" || domainId == "" {
 		mContext{c}.ErrorOP(DataParseError)
@@ -74,6 +78,8 @@ func CreatePath(c *gin.Context) {
 	path.CircuitBreakerPercent,_ = strconv.Atoi(cbPercent)
 	path.CircuitBreakerTimeout,_ = strconv.Atoi(cbTimeout)
 	path.CircuitBreakerMsg = cbMsg
+	path.CircuitBreakerEnabled,_ = strconv.ParseBool(cbEnabled)
+	path.CircuitBreakerForce,_ = strconv.ParseBool(cbForce)
 	path.SetTime = time.Now().Format("2006/1/2 15:04:05")
 
 	pathB, err := json.Marshal(path)

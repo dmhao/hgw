@@ -6,7 +6,6 @@ import (
 )
 
 const (
-
 	DataParseError = -4001
 	DataCannotDeleteError = -3001
 )

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/coreos/etcd/clientv3"
-	"hgw/gateway/def"
 	"strings"
 )
 
@@ -34,8 +33,8 @@ func domainPathsDataPath(domainId string) string {
 }
 
 //获取域名定义数据
-func domainData(dataPath string, getPaths bool) (*def.Domain, error) {
-	domain := new(def.Domain)
+func domainData(dataPath string, getPaths bool) (*Domain, error) {
+	domain := new(Domain)
 	ctx, cancel := context.WithTimeout(context.Background(), readTimeout)
 	rsp, err := cli.Get(ctx, dataPath, clientv3.WithPrefix())
 	cancel()
@@ -57,8 +56,8 @@ func domainData(dataPath string, getPaths bool) (*def.Domain, error) {
 }
 
 //获取所有域名定义数据
-func domainsData(dataPath string) ([]*def.Domain, error) {
-	var domainsData []*def.Domain
+func domainsData(dataPath string) ([]*Domain, error) {
+	var domainsData []*Domain
 	ctx, cancel := context.WithTimeout(context.Background(), readTimeout)
 	rsp, err := cli.Get(ctx, dataPath, clientv3.WithPrefix())
 	cancel()
@@ -66,7 +65,7 @@ func domainsData(dataPath string) ([]*def.Domain, error) {
 		return domainsData, err
 	}
 	for _, rr := range rsp.Kvs {
-		domain := new(def.Domain)
+		domain := new(Domain)
 		err := json.Unmarshal(rr.Value, domain)
 		if err == nil {
 			pathsData, err := domainPathsData(domainPathsDataPath(domain.Id))
@@ -82,8 +81,8 @@ func domainsData(dataPath string) ([]*def.Domain, error) {
 }
 
 //获取域名下所有定义路径数据
-func domainPathsData(dataPath string) ([]*def.Path, error) {
-	var pathsData []*def.Path
+func domainPathsData(dataPath string) ([]*Path, error) {
+	var pathsData []*Path
 	ctx, cancel := context.WithTimeout(context.Background(), readTimeout)
 	rsp, err := cli.Get(ctx, dataPath, clientv3.WithPrefix())
 	cancel()
@@ -91,7 +90,7 @@ func domainPathsData(dataPath string) ([]*def.Path, error) {
 		return pathsData, err
 	}
 	for _, rr := range rsp.Kvs {
-		path := new(def.Path)
+		path := new(Path)
 		err := json.Unmarshal(rr.Value, path)
 		if err == nil {
 			pathsData = append(pathsData, path)
@@ -102,15 +101,15 @@ func domainPathsData(dataPath string) ([]*def.Path, error) {
 	return pathsData, nil
 }
 
-func DomainDataByPath(domainPath string, getPaths bool) (*def.Domain, error) {
+func DomainDataByPath(domainPath string, getPaths bool) (*Domain, error) {
 	return domainData(domainPath, getPaths)
 }
 
-func DomainDataById(domainId string, getPaths bool) (*def.Domain, error) {
+func DomainDataById(domainId string, getPaths bool) (*Domain, error) {
 	return domainData(domainDataPath(domainId), getPaths)
 }
 
-func DomainsData() ([]*def.Domain, error) {
+func DomainsData() ([]*Domain, error) {
 	return domainsData(domainDataPrefix)
 }
 
