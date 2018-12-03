@@ -1,7 +1,7 @@
 # hgw
 【http-reverse_proxy, http/https-gateway，hot-reload】
 
-hgw是由gateway网关服务、manager控制服务构成的一套轻量级网关系统。目前支持http协议的服务控制。
+hgw是由gateway网关服务、manager控制服务构成的一套轻量级网关系统。目前支持http/https协议的服务控制。
 
 hgw通过【ETCD】存储服务数据，状态监控。
 1. 反向代理
@@ -15,7 +15,7 @@ hgw通过【ETCD】存储服务数据，状态监控。
 
 #### 测试地址
 网关服务：https://test.articlechain.cn/
-控制服务：http://test.articlechain.cn:8080/admin/
+控制服务：http://test.articlechain.cn:8080/admin/  账号：admin 密码：admin
 
 ![metricspng](https://img.hacpai.com/pipe/450370050/450370050/450370050/006cb39d23e94ec28949434f3b2f7817.png)
 
