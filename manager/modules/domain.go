@@ -24,11 +24,6 @@ type Domain struct {
 	SetTime				string				`json:"set_time"`
 }
 
-type Target struct {
-	Pointer			string		`json:"pointer"`
-	Weight			int8		`json:"weight"`
-	CurrentWeight	int8		`json:"current_weight"`
-}
 
 func Domains(c *gin.Context) {
 	rsp, err := domainsData()

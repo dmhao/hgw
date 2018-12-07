@@ -51,9 +51,9 @@
                        lay-verify="proxy_target" class="layui-input">
             </div>
             <input type="button"  class="layui-btn" id="add_target" value="增加目标">
-            <div class="layui-input-block" id="domain_list" style="display: none;">
+            <div class="layui-input-block" id="proxy_list" style="display: none;">
                 <table class="layui-table"  style="width: 35%">
-                    <tbody id="domain_list_table">
+                    <tbody id="proxy_list_table">
                     </tbody>
                 </table>
             </div>
@@ -142,7 +142,7 @@
     function refresh_target_html() {
         proxy_targets = unique(proxy_targets)
         if(proxy_targets.length > 0) {
-            $("#domain_list").show();
+            $("#proxy_list").show();
             var domain_table_html = "";
             for(var i=0; i<proxy_targets.length; i++) {
                 domain_table_html += "<tr>" +
@@ -151,10 +151,10 @@
                         "<td width='25%'><span onclick=\"del_target("+i+")\">删除</span></td>" +
                 "</tr>";
             }
-            $("#domain_list_table").html(domain_table_html);
+            $("#proxy_list_table").html(domain_table_html);
         } else {
-            $("#domain_list_table").html("");
-            $("#domain_list").hide();
+            $("#proxy_list_table").html("");
+            $("#proxy_list").hide();
         }
     }
 

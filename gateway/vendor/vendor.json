@@ -99,36 +99,6 @@
 			"revisionTime": "2018-04-15T19:51:42Z"
 		},
 		{
-			"checksumSHA1": "BhMowD2DIKSd9qq8Pzh7Y3mh2/w=",
-			"path": "github.com/gin-contrib/sse",
-			"revision": "22d885f9ecc78bf4ee5d72b937e4bbcdc58e8cae",
-			"revisionTime": "2017-01-09T09:34:21Z"
-		},
-		{
-			"checksumSHA1": "9LPESxfqX6R4OM8bsKpJbb0qTEE=",
-			"path": "github.com/gin-gonic/gin",
-			"revision": "85221af84cf6ee99dc900bc41912abc09acfc1b5",
-			"revisionTime": "2018-07-03T09:17:08Z"
-		},
-		{
-			"checksumSHA1": "7NcNHPRI7I8XPF+abQTFcrSnKO8=",
-			"path": "github.com/gin-gonic/gin/binding",
-			"revision": "85221af84cf6ee99dc900bc41912abc09acfc1b5",
-			"revisionTime": "2018-07-03T09:17:08Z"
-		},
-		{
-			"checksumSHA1": "ZrBlc4nW5joRSLLRThHlxU+bWtg=",
-			"path": "github.com/gin-gonic/gin/json",
-			"revision": "85221af84cf6ee99dc900bc41912abc09acfc1b5",
-			"revisionTime": "2018-07-03T09:17:08Z"
-		},
-		{
-			"checksumSHA1": "7lVWMuL88LIWixvu89qZ9l/kXHw=",
-			"path": "github.com/gin-gonic/gin/render",
-			"revision": "85221af84cf6ee99dc900bc41912abc09acfc1b5",
-			"revisionTime": "2018-07-03T09:17:08Z"
-		},
-		{
 			"checksumSHA1": "hjLsderTAQo7SheOq3VaYh6e5uM=",
 			"path": "github.com/go-chi/chi",
 			"revision": "624e6e12e9bc3b3073f539dab52abecdec01d769",
@@ -183,12 +153,6 @@
 			"revisionTime": "2017-10-23T06:44:55Z"
 		},
 		{
-			"checksumSHA1": "kum8izZy1+pVfDiApW5hT2HoH1w=",
-			"path": "github.com/mattn/go-isatty",
-			"revision": "6ca4dbf54d38eea1a992b3c722a76a5d1c4cb25c",
-			"revisionTime": "2017-11-07T05:05:31Z"
-		},
-		{
 			"checksumSHA1": "B4MQSFtn9ip7g7pwzp4w5nAK+IE=",
 			"origin": "github.com/didip/tollbooth/vendor/github.com/patrickmn/go-cache",
 			"path": "github.com/patrickmn/go-cache",
@@ -230,12 +194,6 @@
 			"path": "github.com/sirupsen/logrus",
 			"revision": "ea8897e79973357ba785ac2533559a6297e83c44",
 			"revisionTime": "2018-05-23T07:42:43Z"
-		},
-		{
-			"checksumSHA1": "DRScazLhz8LcQnFUitRrLO+pV2s=",
-			"path": "github.com/ugorji/go/codec",
-			"revision": "2e1067cd04ec91c6fdf491ac8028c9d3aea73ab4",
-			"revisionTime": "2018-07-12T10:27:45Z"
 		},
 		{
 			"checksumSHA1": "ZaU56svwLgiJD0y8JOB3+/mpYBA=",
@@ -475,42 +433,6 @@
 			"path": "gopkg.in/alecthomas/kingpin.v2",
 			"revision": "1087e65c9441605df944fb12c33f0fe7072d18ca",
 			"revisionTime": "2017-07-27T04:22:29Z"
-		},
-		{
-			"checksumSHA1": "q190bL03wQok3wVwYmMub2XhOiU=",
-			"path": "gopkg.in/go-playground/validator.v8",
-			"revision": "5f1438d3fca68893a817e4a66806cea46a9e4ebf",
-			"revisionTime": "2017-07-30T05:02:35Z"
-		},
-		{
-			"checksumSHA1": "d3jYBfW+YmOxsa5o8m6XyywVbIo=",
-			"path": "gopkg.in/yaml.v2",
-			"revision": "5420a8b6744d3b0345ab293f6fcba19c978f1183",
-			"revisionTime": "2018-03-28T19:50:20Z"
-		},
-		{
-			"checksumSHA1": "29ZzHRBeNIgN6wqnpf09nM8toWA=",
-			"path": "hgw/gateway/core",
-			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
-			"revisionTime": "2018-12-03T08:42:05Z"
-		},
-		{
-			"checksumSHA1": "nkdjKuVSjaBQV+aQtJ8XEVyUu6I=",
-			"path": "hgw/gateway/lb",
-			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
-			"revisionTime": "2018-12-03T08:42:05Z"
-		},
-		{
-			"checksumSHA1": "bwqxNkQNFUcicYGhl+g465KiBUQ=",
-			"path": "hgw/gateway/middleware",
-			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
-			"revisionTime": "2018-12-03T08:42:05Z"
-		},
-		{
-			"checksumSHA1": "E4iQEyxfGUn+CzLZawoFB0tkf2E=",
-			"path": "hgw/gateway/router",
-			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
-			"revisionTime": "2018-12-03T08:42:05Z"
 		}
 	],
 	"rootPath": "github.com/dmhao/hgw/gateway"

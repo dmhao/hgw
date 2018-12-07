@@ -62,7 +62,9 @@
                         list_html += "<td class=\"f-14 td-manage\"> " +
                                 "<a onClick=\"domain_edit(this,'"+rsp.data[i].id+"')\" title=\"修改域名\">修改域名" +
                                 "</a>&nbsp;&nbsp;&nbsp;&nbsp;" +
-                                "<a onClick=\"paths_list(this,'"+rsp.data[i].id+"')\" title=\"接口管理\">接口管理" +
+                                "<a onClick=\"paths_list(this,'"+rsp.data[i].id+"')\" title=\"路径管理\">路径管理" +
+                                "</a>&nbsp;&nbsp;&nbsp;&nbsp;" +
+                                "<a onClick=\"request_listen(this,'"+rsp.data[i].id+"')\" title=\"请求拷贝\">拷贝请求" +
                                 "</a>&nbsp;&nbsp;&nbsp;&nbsp;" +
                                 "<a onClick=\"domain_del(this,'"+rsp.data[i].id+"')\" title=\"删除\">删除" +
                                 "</a>&nbsp;&nbsp;" +
@@ -111,6 +113,16 @@
             resize: false,
             title: "域名-添加",
             content: "domain-add.html",
+            area: ["95%","95%"]
+        });
+    }
+
+    function request_listen(obj, id) {
+        var index = layer.open({
+            type: 2,
+            resize: false,
+            title: "请求拷贝",
+            content: "request-listen.html?domain_id="+id,
             area: ["95%","95%"]
         });
     }

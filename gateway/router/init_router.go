@@ -3,10 +3,9 @@ package router
 import (
 	"encoding/json"
 	"github.com/coreos/etcd/clientv3"
-	"github.com/gin-gonic/gin"
 	"github.com/go-chi/chi"
-	"hgw/gateway/core"
-	"hgw/gateway/middleware"
+	"github.com/dmhao/hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/middleware"
 	"net/http"
 	"strings"
 )
@@ -21,72 +20,66 @@ func (hs HostSwitch) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 var hsMux HostSwitch
-//创建路由
+//创建路由选择器
 func init() {
 	hsMux = make(HostSwitch)
 }
 
-//获取当前路由
+//获取当前路由选择器
 func GetHs() HostSwitch {
 	return hsMux
 }
 
-//初始化路由
+//初始化路由选择器
 func InitHs() error {
-	core.Sys().Infof("读取数据初始化配置路由")
+	core.Sys().Infof("初始化配置路由")
 	domainsData, err := core.DomainsData()
 	if err != nil {
 		return err
 	}
-	reloadHs(domainsData)
+	loadHs(domainsData)
 	return nil
 }
 
-//重新加载路由数据
-func reloadHs(domainsData []*core.Domain) {
+//加载所有路由数据
+func loadHs(domainsData []*core.Domain) {
 	newHsMux := make(HostSwitch)
 	for _,domain := range domainsData {
-		if _,ok := newHsMux[domain.DomainUrl]; !ok {
-			rt := chi.NewMux()
-			newHsMux[domain.DomainUrl] = rt
+		if _,ok := hsMux[domain.DomainUrl]; !ok {
+			tmpMux := chi.NewMux()
+			newHsMux[domain.DomainUrl] = tmpMux
 		}
 		mux := newHsMux[domain.DomainUrl]
-		mux.Handle("/*", middleware.CreateMwChain(domain))
-		if len(domain.Paths) > 0 {
-			for _,path := range domain.Paths {
-				mux.Handle(path.ReqPath, middleware.CreatePathMwChain(domain, path))
-				core.Sys().Infof("【域名%s】【路径%s】-配置完毕", domain.DomainUrl, path.ReqPath)
-			}
-		}
+		loadDomainHandler(mux, domain)
 		core.Sys().Infof("【域名%s】-配置完毕", domain.DomainUrl)
 	}
 	hsMux = newHsMux
 }
 
-func initRouter(domainId string) error {
-	gin.Recovery()
-	domainData, err := core.DomainDataById(domainId, true)
-	if err != nil {
-		return err
-	}
-	if domainData != nil {
-		reloadRouter(domainData)
-	}
-	return nil
-}
-
-func reloadRouter(domain *core.Domain) {
-	mux := chi.NewMux()
+func loadDomainHandler(mux *chi.Mux,domain *core.Domain) {
 	mux.Handle("/*", middleware.CreateMwChain(domain))
 	if len(domain.Paths) > 0 {
 		for _,path := range domain.Paths {
-			mux.Handle(path.ReqPath, middleware.CreatePathMwChain(domain, path))
+			mapMethodHandler(mux, path.ReqMethod, path.ReqPath, middleware.CreatePathMwChain(domain, path))
 		}
 	}
+}
+
+//重新加载域名数据的所有handler
+func reloadDomainHandler(domain *core.Domain) {
+	mux := chi.NewMux()
+	loadDomainHandler(mux, domain)
 	hs := GetHs()
 	hs[domain.DomainUrl] = mux
+}
+
+func checkMuxExists(url string) {
+	hsMux := GetHs()
+	if _,ok := hsMux[url]; !ok {
+		tmpMux := chi.NewMux()
+		hsMux[url] = tmpMux
+	}
 }
 
 func WatchDomainChange() {
@@ -103,32 +96,39 @@ func pathChangeListen() {
 	for{
 		select {
 		case ev := <-ech:
-			var domainId string
-			keySplit := strings.Split(string(ev.Kv.Key), "/")
-			domainId = keySplit[3]
-
 			if ev.Type == clientv3.EventTypeDelete{
-				core.Sys().Infof("【域名%s】下路径删除，重新加载域名路由")
-				initRouter(domainId)
-				continue
+				dataPath := core.PathKToBakPathK(string(ev.Kv.Key))
+				path, err := core.DomainPathData(dataPath)
+				if err != nil || path == nil {
+					core.Sys().Warnf("【域名-路径%s】备份数据获取失败", string(ev.Kv.Key))
+					continue
+				}
+
+				domain, err := core.DomainDataById(path.DomainId, true)
+				if err != nil {
+					continue
+				}
+				if domain != nil {
+					reloadDomainHandler(domain)
+				}
+				core.Sys().Infof("【域名%s】下路径删除，重新加载域名路由", domain.DomainUrl)
 			} else if ev.Type == clientv3.EventTypePut {
-				domain,err  := core.DomainDataById(domainId, false)
+				path := new(core.Path)
+				err := json.Unmarshal(ev.Kv.Value, path)
+				if err != nil {
+					keySplit := strings.Split(string(ev.Kv.Key), "/")
+					domainId := keySplit[3]
+					core.Sys().Warnf("【域名%s】路径更新，json解析失败 %q", domainId, ev.Kv.Value)
+					continue
+				}
+				domain,err  := core.DomainDataById(path.DomainId, false)
 				if err != nil {
 					continue
 				}
 				hsMux := GetHs()
-				if _,ok := hsMux[domain.DomainUrl]; !ok {
-					tmpMux := chi.NewMux()
-					hsMux[domain.DomainUrl] = tmpMux
-				}
+				checkMuxExists(domain.DomainUrl)
 				if mux, ok := hsMux[domain.DomainUrl]; ok {
-					pathDef := new(core.Path)
-					err := json.Unmarshal(ev.Kv.Value, pathDef)
-					core.Sys().Warnf("【域名%s】路径更新，json解析失败 %q", domainId, ev.Kv.Value)
-					if err != nil {
-						continue
-					}
-					mux.Handle(pathDef.ReqPath, middleware.CreatePathMwChain(domain, pathDef))
+					mapMethodHandler(mux, path.ReqMethod, path.ReqPath, middleware.CreatePathMwChain(domain, path))
 				}
 			}
 		}
@@ -143,35 +143,60 @@ func domainChangeListen() {
 		select {
 		case ev := <-ech:
 			if ev.Type == clientv3.EventTypeDelete{
-				domainBakPath := core.DomainToBakDomainPath(string(ev.Kv.Key))
-				domain,err  := core.DomainDataByPath(domainBakPath, false)
+				domainBakPath := core.DomainKToBakDomainK(string(ev.Kv.Key))
+				domain,err  := core.DomainDataByK(domainBakPath, false)
 				if err != nil {
 					core.Sys().Warnf("【域名路径%s】删除-获取备份数据失败", string(ev.Kv.Key))
 					continue
 				}
-				hsMux := GetHs()
-				delete(hsMux, domain.DomainUrl)
-				core.Sys().Infof("【域名%s】删除", domain.DomainUrl)
+				delDomainClean(domain)
 			} else if ev.Type == clientv3.EventTypePut {
-				var domainId string
-				keySplit := strings.Split(string(ev.Kv.Key), "/")
-				domainId = keySplit[3]
 				domain := new(core.Domain)
 				err := json.Unmarshal(ev.Kv.Value, domain)
 				if err != nil {
-					core.Sys().Warnf("【域名%s】更新，json解析失败 %q", domainId, ev.Kv.Value)
+					keySplit := strings.Split(string(ev.Kv.Key), "/")
+					domainId := keySplit[3]
+					core.Sys().Warnf("【域名%s】更新，json解析失败 %s", domainId, string(ev.Kv.Value))
 					continue
 				}
 				hsMux := GetHs()
-				if _,ok := hsMux[domain.DomainUrl]; !ok {
-					tmpMux := chi.NewMux()
-					hsMux[domain.DomainUrl] = tmpMux
-				}
+				checkMuxExists(domain.DomainUrl)
 				if mux, ok := hsMux[domain.DomainUrl]; ok {
 					mux.Handle("/*", middleware.CreateMwChain(domain))
 					core.Sys().Infof("【域名%s】更新", domain.DomainUrl)
 				}
 			}
 		}
+	}
+}
+
+func delDomainClean(domain *core.Domain) {
+	hsMux := GetHs()
+	delete(hsMux, domain.DomainUrl)
+	core.DelDomainMetrics(domain)
+	core.Sys().Infof("【域名%s】删除", domain.DomainUrl)
+}
+
+func mapMethodHandler(mux *chi.Mux, method string, pattern string, handler http.Handler) {
+	met := strings.ToUpper(method)
+	switch met {
+	case "ALL":
+		mux.Handle(pattern, handler)
+	case "GET":
+		mux.Method(method, pattern, handler)
+	case "POST":
+		mux.Method(method, pattern, handler)
+	case "PUT":
+		mux.Method(method, pattern, handler)
+	case "PATCH":
+		mux.Method(method, pattern, handler)
+	case "DELETE":
+		mux.Method(method, pattern, handler)
+	case "OPTIONS":
+		mux.Method(method, pattern, handler)
+	case "HEAD":
+		mux.Method(method, pattern, handler)
+	default:
+		mux.Handle(pattern, handler)
 	}
 }

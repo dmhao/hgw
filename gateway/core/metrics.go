@@ -33,6 +33,18 @@ func NewDomainPathMetrics(domain *Domain, path *Path) *Metrics {
 	return initMetrics(m)
 }
 
+func DelDomainMetrics(domain *Domain) {
+	unsetMetrics(domain.DomainUrl + "|-|" + "/*")
+}
+
+func DelDomainPathMetrics(domain *Domain, path *Path) {
+	unsetMetrics(domain.DomainUrl + "|-|" + path.ReqPath)
+}
+
+func unsetMetrics(prefix string) {
+	hgwMetrics.Unregister(prefix + "|-|Histograms")
+}
+
 func initMetrics(m metrics.Registry) *Metrics {
 	his := metrics.NewHistogram(metrics.NewExpDecaySample(1028, 0.015))
 	m.GetOrRegister("|-|Histograms", his)

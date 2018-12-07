@@ -366,12 +366,6 @@
 			"path": "gopkg.in/yaml.v2",
 			"revision": "5420a8b6744d3b0345ab293f6fcba19c978f1183",
 			"revisionTime": "2018-03-28T19:50:20Z"
-		},
-		{
-			"checksumSHA1": "11CmdKiqJTV/6IfRm+RfCjh6JP0=",
-			"path": "hgw/manager/modules",
-			"revision": "0761078222f2e8581ff28e72a31d8636f21c4174",
-			"revisionTime": "2018-12-03T08:42:05Z"
 		}
 	],
 	"rootPath": "github.com/dmhao/hgw/manager"

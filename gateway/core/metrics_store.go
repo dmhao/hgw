@@ -19,11 +19,11 @@ const (
 	activeDataTTL = 21600
 )
 
-func gatewayActivePath(serName string) string {
+func gatewayActiveK(serName string) string {
 	return fmt.Sprintf(metricsGatewayActiveFormat, serName)
 }
 
-func gatewayActiveDataPath(serName string,) string {
+func gatewayActiveDataK(serName string,) string {
 	return fmt.Sprintf(metricsGatewayActiveDataFormat, serName, time.Now().Format("2006-1-2-15-04"))
 }
 
@@ -35,7 +35,7 @@ func putGatewayMachineData(serName string, jsonData string) error {
 	if err != nil {
 		return err
 	}
-	_, err = cli.Put(ctx, gatewayActivePath(serName), jsonData, clientv3.WithLease(lease.ID))
+	_, err = cli.Put(ctx, gatewayActiveK(serName), jsonData, clientv3.WithLease(lease.ID))
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func putGatewayActiveData(serName string, jsonData string) error {
 	if err != nil {
 		return err
 	}
-	_, err = cli.Put(ctx, gatewayActiveDataPath(serName), jsonData, clientv3.WithLease(lease.ID))
+	_, err = cli.Put(ctx, gatewayActiveDataK(serName), jsonData, clientv3.WithLease(lease.ID))
 	if err != nil {
 		return err
 	}

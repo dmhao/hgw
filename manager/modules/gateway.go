@@ -2,6 +2,7 @@ package modules
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
 	"time"
@@ -16,6 +17,7 @@ type Record struct {
 	Mean		float64			`json:"mean"`
 	Max			float64			`json:"max"`
 	Min			float64			`json:"min"`
+	TimeStr		string			`json:"time_str"`
 }
 
 const (
@@ -73,6 +75,7 @@ func Gateway(c *gin.Context) {
 		if err != nil {
 			continue
 		}
+		fmt.Println(recordData)
 		recordTime := recordData.Time
 		timeData := time.Unix(recordTime, 0).Format("15:04")
 		timesData = append(timesData, timeData)
@@ -80,7 +83,7 @@ func Gateway(c *gin.Context) {
 		for oldSpan,_ := range metricsData {
 			if _, ok := spanMap[oldSpan]; !ok {
 				spans := strings.Split(oldSpan, "|-|")
-				spanMap[oldSpan] = spans[1]
+				spanMap[oldSpan] = spans[0]+spans[1]
 			}
 			span := spanMap[oldSpan]
 			if _, ok := metricsMap[span]; !ok {
@@ -96,11 +99,12 @@ func Gateway(c *gin.Context) {
 		if err != nil {
 			continue
 		}
+		recordTime := recordData.Time
+		timeData := time.Unix(recordTime, 0).Format("15:04")
 		for k := range metricsMap {
-			metricsMap[k] = append(metricsMap[k], Record{0,0,0, 0})
+			metricsMap[k] = append(metricsMap[k], Record{0,0,0, 0, timeData})
 		}
-		metricsData := recordData.MetricsData
-		for oldSpan,metrics := range metricsData {
+		for oldSpan,metrics := range recordData.MetricsData {
 			span := spanMap[oldSpan]
 			metricsMap[span][start].Count = metrics["count"].(float64)
 			metricsMap[span][start].Mean = Milliseconds(time.Duration(int64(metrics["mean"].(float64))))

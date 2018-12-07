@@ -11,15 +11,15 @@ import (
 const (
 	hgwCertsPath = hgwPrefix + "server-tls/"
 	hgwCertFormat = hgwCertsPath + "%s"
-	hgwCertBakPrefix = hgwPrefix + "server-tls-bak/"
+	hgwCertsBakPrefix = hgwPrefix + "server-tls-bak/"
 )
 
-func certDataPath(certId string) string {
+func certDataK(certId string) string {
 	return fmt.Sprintf(hgwCertFormat, certId)
 }
 
-func certBakDataPath(certPath string) string {
-	return strings.Replace(certPath, hgwCertsPath, hgwCertBakPrefix, 1)
+func certBakDataK(certPath string) string {
+	return strings.Replace(certPath, hgwCertsPath, hgwCertsBakPrefix, 1)
 }
 
 func watchCerts(e chan *clientv3.Event) {

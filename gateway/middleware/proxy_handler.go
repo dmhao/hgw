@@ -1,10 +1,9 @@
 package middleware
 
 import (
-	"hgw/gateway/lb"
+	"github.com/dmhao/hgw/gateway/lb"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 )
 
@@ -19,16 +18,26 @@ const (
 
 func (p *GateWay) Init() {
 	if p.GetLb() == nil {
+		path := p.GetPath()
 		lbType := p.GetDomain().LbType
-		switch strings.ToUpper(lbType) {
+		targets := p.GetDomain().Targets
+
+		if p.GetHandlerType() == DomainPathHandler && path != nil {
+			if path.PrivateProxyEnabled {
+				lbType = path.LbType
+				targets = path.Targets
+			}
+		}
+
+		switch lbType {
 		case LbRandom:
-			p.SetLb(lb.NewRandom(p.GetDomain().Targets, time.Now().UnixNano()))
+			p.SetLb(lb.NewRandom(targets, time.Now().UnixNano()))
 		case LbRoundRobin:
-			p.SetLb(lb.NewRoundRobin(p.GetDomain().Targets))
+			p.SetLb(lb.NewRoundRobin(targets))
 		case LbWeightRoundRobin:
-			p.SetLb(lb.NewWeightRoundRobin(p.GetDomain().Targets))
+			p.SetLb(lb.NewWeightRoundRobin(targets))
 		default:
-			p.SetLb(lb.NewRoundRobin(p.GetDomain().Targets))
+			p.SetLb(lb.NewRoundRobin(targets))
 		}
 	}
 }
@@ -45,7 +54,7 @@ func(p *GateWay) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		hgwResponse.ProxyErrorChan() <- err
 	}
-	proxy := NewSingleHostReverseProxy(remote)
+	proxy := NewSingleHostReverseProxy(remote, p.GetPath())
 	proxy.ErrorHandler = func(rw http.ResponseWriter, request *http.Request, e error) {
 		hgwResponse.ProxyErrorChan() <- e
 	}

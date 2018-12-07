@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/sirupsen/logrus"
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"net/http"
 	"time"
 )
@@ -23,6 +23,7 @@ func (mw *LoggerMw) Init() func(http.Handler) http.Handler {
 			}
 
 			core.Proxy().WithFields(logrus.Fields{
+				"req-ip": hgwResponse.ReqIp(),
 				"req-method": r.Method,
 				"req-domain": r.Host,
 				"req-path": r.RequestURI,

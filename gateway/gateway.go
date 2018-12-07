@@ -3,8 +3,8 @@ package main
 import (
 	"crypto/tls"
 	"gopkg.in/alecthomas/kingpin.v2"
-	"hgw/gateway/core"
-	"hgw/gateway/router"
+	"github.com/dmhao/hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/router"
 	"net"
 	"net/http"
 	"os"
@@ -42,6 +42,9 @@ func main() {
 	kingpin.HelpFlag.Short('h')
 	kingpin.Version(version)
 	kingpin.Parse()
+
+	core.SetSerName(*serName)
+
 	err := core.ConnectStore([]string{*etcd}, *username, *password)
 	if err != nil {
 		core.Sys().Fatalln("etcd 连接失败", err)
@@ -72,6 +75,7 @@ func main() {
 	}
 
 	go core.RecordMetrics(*serName)
+	go core.RequestListenRun()
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-const Issuer = "hjh_im"
+const Issuer = "hgw_admin"
 const TokenExpire = 24 * time.Hour
 
 

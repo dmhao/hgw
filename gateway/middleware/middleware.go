@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/justinas/alice"
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"net/http"
 )
 
@@ -34,6 +34,7 @@ func createMwChain(base *Base) http.Handler {
 	mwList(&chainArray, (&RecoverMw{base}).Init())
 	mwList(&chainArray, (&BlackIpsMw{base}).Init())
 	mwList(&chainArray, (&MetricsMw{base}).Init())
+	mwList(&chainArray, (&RequestCopyMw{base}).Init())
 	mwList(&chainArray, (&LoggerMw{base}).Init())
 	mwList(&chainArray, (&RateLimiterMw{base}).Init())
 	mwList(&chainArray, (&BreakerMw{base}).Init())

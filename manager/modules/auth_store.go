@@ -13,7 +13,7 @@ const (
 	adminUserDataPathFormat = authDataPath + "auth-data/user/%s"
 )
 
-func adminUserPath(username string) string {
+func adminUserK(username string) string {
 	return fmt.Sprintf(adminUserDataPathFormat, username)
 }
 
@@ -28,7 +28,7 @@ func authInitData() (*clientv3.GetResponse, error) {
 func putAdminUser(userId string, userJson string) bool {
 	ctx, cancel := context.WithTimeout(context.Background(), writeTimeout)
 	txn := cli.Txn(ctx)
-	rsp, err := txn.Then(clientv3.OpPut(adminUserPath(userId), userJson),
+	rsp, err := txn.Then(clientv3.OpPut(adminUserK(userId), userJson),
 		clientv3.OpPut(authInitDataPath, time.Now().Format("2006-01-02 15:04"))).Commit()
 	cancel()
 	if err != nil {
@@ -40,7 +40,7 @@ func putAdminUser(userId string, userJson string) bool {
 
 func adminUser(userId string) (*clientv3.GetResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), writeTimeout)
-	rsp, err := cli.Get(ctx, adminUserPath(userId))
+	rsp, err := cli.Get(ctx, adminUserK(userId))
 	cancel()
 	return rsp, err
 }

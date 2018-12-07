@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"net/http"
 	"time"
 )
@@ -10,16 +10,19 @@ type hgwResponse struct {
 	rw				http.ResponseWriter
 	status 			int
 	size   			int
+	rspBody			[]byte
 	startTime		time.Time
 	pErrorChan		chan error
 	pSuccessChan	chan bool
 	pUseTime		time.Duration
 	pTarget			*core.Target
+	reqIp			string
 }
 
 type hgwResponseWriter interface {
 	Status() int
 	Size()	int
+	RspBody() []byte
 	ProxyErrorChan()	chan error
 	ProxySuccessChan()	chan bool
 	StartTime()	time.Time
@@ -27,6 +30,8 @@ type hgwResponseWriter interface {
 	ProxyUseTime() time.Duration
 	SetProxyTarget(*core.Target)
 	ProxyTarget() *core.Target
+	SetReqIp(string)
+	ReqIp() string
 }
 
 func (mw *hgwResponse) Header() http.Header {
@@ -36,6 +41,7 @@ func (mw *hgwResponse) Header() http.Header {
 func (mw *hgwResponse) Write(b []byte) (int, error) {
 	size, err := mw.rw.Write(b)
 	mw.size += size
+	mw.rspBody = append(mw.rspBody, b...)
 	return size, err
 }
 
@@ -50,6 +56,10 @@ func (mw *hgwResponse) Status() int {
 
 func (mw *hgwResponse) Size() int {
 	return mw.size
+}
+
+func (mw *hgwResponse) RspBody() []byte {
+	return mw.rspBody
 }
 
 func (mw *hgwResponse) ProxyErrorChan() chan error {
@@ -78,4 +88,12 @@ func (mw *hgwResponse) SetProxyTarget(t *core.Target) {
 
 func (mw *hgwResponse) ProxyTarget() *core.Target {
 	return mw.pTarget
+}
+
+func (mw *hgwResponse) SetReqIp(ip string) {
+	mw.reqIp = ip
+}
+
+func (mw *hgwResponse) ReqIp() string {
+	return mw.reqIp
 }

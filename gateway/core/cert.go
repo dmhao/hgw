@@ -31,7 +31,7 @@ func InitCerts() {
 			}
 			certMap[cert.SerName] = &certificate
 		}
-		Sys().Warnf("所有域名证书设置完成")
+		Sys().Infoln("所有域名证书设置完成")
 	}
 }
 
@@ -76,7 +76,7 @@ func CertsChangeListen() {
 				certMap[cert.SerName] = &certificate
 				Sys().Infof("域名%s证书更新完成", cert.SerName)
 			} else if ev.Type == clientv3.EventTypeDelete {
-				certBak, err := certData(certBakDataPath(string(ev.Kv.Key)))
+				certBak, err := certData(certBakDataK(string(ev.Kv.Key)))
 				if err != nil {
 					Sys().Warnf("【域名证书路径%s】删除-获取备份数据失败", string(ev.Kv.Key))
 					continue

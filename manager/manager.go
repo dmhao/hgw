@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/alecthomas/kingpin.v2"
-	"hgw/manager/modules"
+	"github.com/dmhao/hgw/manager/modules"
 )
 
 var (
@@ -53,6 +53,9 @@ func main() {
 
 	v1.GET("/gateways/", modules.Gateways)
 	v1.GET("/gateways/:server_name", modules.Gateway)
+
+	v1.POST("/requests-listen/:domain_id/", modules.AddRequestListen)
+	v1.GET("/requests-copy/", modules.RequestsCopy)
 
 
 	r.GET("/index", modules.Index, modules.AuthHandler)

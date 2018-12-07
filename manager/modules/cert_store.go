@@ -9,15 +9,15 @@ import (
 const (
 	hgwCertsPrefix = hgwPrefix + "server-tls/"
 	hgwCertFormat = hgwCertsPrefix + "%s"
-	hgwCertBakPrefix = hgwPrefix + "server-tls-bak/"
-	hgwCertBakFormat = hgwCertBakPrefix + "%s"
+	hgwCertsBakPrefix = hgwPrefix + "server-tls-bak/"
+	hgwCertBakFormat = hgwCertsBakPrefix + "%s"
 )
 
-func certDataPath(certId string) string {
+func certDataK(certId string) string {
 	return fmt.Sprintf(hgwCertFormat, certId)
 }
 
-func certBakDataPath(certId string) string {
+func certBakDataK(certId string) string {
 	return fmt.Sprintf(hgwCertBakFormat, certId)
 }
 
@@ -32,7 +32,7 @@ func certsData() (*clientv3.GetResponse, error) {
 
 func putCert(certId , certJson string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), writeTimeout)
-	_, err := cli.Put(ctx, certDataPath(certId), certJson)
+	_, err := cli.Put(ctx, certDataK(certId), certJson)
 	cancel()
 	if err != nil {
 		return err
@@ -41,8 +41,8 @@ func putCert(certId , certJson string) error {
 }
 
 func delCert(certId string) bool {
-	dataPath := certDataPath(certId)
-	dataBakPath := certBakDataPath(certId)
+	dataPath := certDataK(certId)
+	dataBakPath := certBakDataK(certId)
 	ctx, cancel := context.WithTimeout(context.Background(), writeTimeout)
 	defer cancel()
 	dataRsp, err  := cli.Get(ctx, dataPath)

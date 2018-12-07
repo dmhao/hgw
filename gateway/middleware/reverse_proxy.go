@@ -8,6 +8,7 @@ package middleware
 
 import (
 	"context"
+	"github.com/dmhao/hgw/gateway/core"
 	"io"
 	"log"
 	"net"
@@ -102,11 +103,17 @@ func singleJoiningSlash(a, b string) string {
 // NewSingleHostReverseProxy does not rewrite the Host header.
 // To rewrite Host headers, use ReverseProxy directly with a custom
 // Director policy.
-func NewSingleHostReverseProxy(target *url.URL) *ReverseProxy {
+func NewSingleHostReverseProxy(target *url.URL, path *core.Path) *ReverseProxy {
 	targetQuery := target.RawQuery
 	director := func(req *http.Request) {
+		if path != nil {
+			if path.SearchPath != "" {
+				req.URL.Path = strings.Replace(req.URL.Path, path.SearchPath, path.ReplacePath, 1)
+			}
+		}
 		req.URL.Scheme = target.Scheme
 		req.URL.Host = target.Host
+
 		req.URL.Path = singleJoiningSlash(target.Path, req.URL.Path)
 		req.Host = target.Host
 		if targetQuery == "" || req.URL.RawQuery == "" {
@@ -118,7 +125,7 @@ func NewSingleHostReverseProxy(target *url.URL) *ReverseProxy {
 			// explicitly disable User-Agent so it's not set to default value
 			req.Header.Set("User-Agent", "")
 		}
-		req.Header.Set("User-Agent", "Tyk/1.2")
+		req.Header.Set("User-Agent", "hgw")
 	}
 	return &ReverseProxy{Director: director}
 }

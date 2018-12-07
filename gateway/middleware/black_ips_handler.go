@@ -14,6 +14,9 @@ func (mw *BlackIpsMw) Init() func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 			ip := realIP(r)
+			hgwResponse := rw.(hgwResponseWriter)
+			hgwResponse.SetReqIp(ip)
+
 			if _,ok := mw.GetDomain().BlackIps[ip]; ok {
 				rw.WriteHeader(http.StatusForbidden)
 			} else {
