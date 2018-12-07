@@ -1,7 +1,7 @@
 package lb
 
 import (
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"sync"
 )
 

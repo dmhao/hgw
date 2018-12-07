@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/justinas/alice"
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"net/http"
 )
 

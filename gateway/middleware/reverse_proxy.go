@@ -8,7 +8,7 @@ package middleware
 
 import (
 	"context"
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"io"
 	"log"
 	"net"

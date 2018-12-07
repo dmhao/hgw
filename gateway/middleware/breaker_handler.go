@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/afex/hystrix-go/hystrix"
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"net/http"
 )
 

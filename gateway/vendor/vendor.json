@@ -439,30 +439,6 @@
 			"path": "gopkg.in/alecthomas/kingpin.v2",
 			"revision": "1087e65c9441605df944fb12c33f0fe7072d18ca",
 			"revisionTime": "2017-07-27T04:22:29Z"
-		},
-		{
-			"checksumSHA1": "XY3S/cTnh48PnEqCJafgQVZQus0=",
-			"path": "hgw/gateway/core",
-			"revision": "27ea9b9f261ef28f0bc9aa6ec9c811b35aa5957f",
-			"revisionTime": "2018-12-07T07:58:48Z"
-		},
-		{
-			"checksumSHA1": "nkdjKuVSjaBQV+aQtJ8XEVyUu6I=",
-			"path": "hgw/gateway/lb",
-			"revision": "27ea9b9f261ef28f0bc9aa6ec9c811b35aa5957f",
-			"revisionTime": "2018-12-07T07:58:48Z"
-		},
-		{
-			"checksumSHA1": "tniKPwmvkAunyk9lAhpzx1pg9vk=",
-			"path": "hgw/gateway/middleware",
-			"revision": "27ea9b9f261ef28f0bc9aa6ec9c811b35aa5957f",
-			"revisionTime": "2018-12-07T07:58:48Z"
-		},
-		{
-			"checksumSHA1": "j0xWb38MsisUClNUy0G5+IeQ5FQ=",
-			"path": "hgw/gateway/router",
-			"revision": "27ea9b9f261ef28f0bc9aa6ec9c811b35aa5957f",
-			"revisionTime": "2018-12-07T07:58:48Z"
 		}
 	],
 	"rootPath": "github.com/dmhao/hgw/gateway"

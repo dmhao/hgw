@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"hgw/gateway/lb"
+	"github.com/dmhao/hgw/gateway/lb"
 	"net/http"
 	"net/url"
 	"time"

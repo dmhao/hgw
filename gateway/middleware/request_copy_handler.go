@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"github.com/axgle/mahonia"
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"io"
 	"io/ioutil"
 	"net/http"

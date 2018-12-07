@@ -2,7 +2,7 @@ package lb
 
 import (
 	"errors"
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 )
 type LoadBalance interface {
 	Target() (*core.Target, error)

@@ -4,7 +4,7 @@ import (
 	"crypto/tls"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"github.com/dmhao/hgw/gateway/core"
-	"hgw/gateway/router"
+	"github.com/dmhao/hgw/gateway/router"
 	"net"
 	"net/http"
 	"os"

@@ -3,7 +3,7 @@ package middleware
 import (
 	"bytes"
 	"fmt"
-	"hgw/gateway/core"
+	"github.com/dmhao/hgw/gateway/core"
 	"io/ioutil"
 	"net/http"
 	"runtime"
