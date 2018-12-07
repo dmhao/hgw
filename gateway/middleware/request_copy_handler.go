@@ -3,7 +3,8 @@ package middleware
 import (
 	"bytes"
 	"compress/gzip"
-	"github.com/dmhao/hgw/gateway/core"
+	"github.com/axgle/mahonia"
+	"hgw/gateway/core"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -70,23 +71,46 @@ func (mw *RequestCopyMw) Init() func(http.Handler) http.Handler {
 				requestCopy.RspHeader = rw.Header()
 
 				//记录返回数据  判断是否需要gzip
-				needGzip := false
-				if headerVal, ok := requestCopy.RspHeader["Content-Encoding"]; ok {
-					for _, data := range headerVal {
-						if strings.Index(data, "gzip") != -1 {
-							needGzip = true
-						}
-					}
-				}
-				if needGzip {
+				if isGzip(requestCopy) {
 					requestCopy.RspBody = gzipByteToString(hgwRsp.RspBody())
 				} else {
 					requestCopy.RspBody = string(hgwRsp.RspBody())
 				}
+
+				if isGbk(requestCopy) {
+					dec := mahonia.NewDecoder("gbk")
+					requestCopy.RspBody = dec.ConvertString(requestCopy.RspBody)
+				}
+
 				core.PutRequestCopy(requestCopy)
 			}
 		})
 	}
+}
+
+func isGbk(requestCopy *core.RequestCopy) bool {
+	convertGBK := false
+	if headerVal, ok := requestCopy.RspHeader["Content-Type"]; ok {
+		for _, data := range headerVal {
+			data = strings.ToLower(data)
+			if strings.Index(data, "gb2312") != -1  || strings.Index(data, "gbk") != -1 {
+				convertGBK = true
+			}
+		}
+	}
+	return convertGBK
+}
+
+func isGzip(requestCopy *core.RequestCopy) bool {
+	needGzip := false
+	if headerVal, ok := requestCopy.RspHeader["Content-Encoding"]; ok {
+		for _, data := range headerVal {
+			if strings.Index(data, "gzip") != -1 {
+				needGzip = true
+			}
+		}
+	}
+	return needGzip
 }
 
 func gzipByteToString(p []byte) string {

@@ -1,7 +1,7 @@
 package lb
 
 import (
-	"github.com/dmhao/hgw/gateway/core"
+	"hgw/gateway/core"
 	"math/rand"
 )
 

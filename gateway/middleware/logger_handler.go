@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/sirupsen/logrus"
-	"github.com/dmhao/hgw/gateway/core"
+	"hgw/gateway/core"
 	"net/http"
 	"time"
 )

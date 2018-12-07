@@ -24,23 +24,17 @@ hgw 是一套支持http/https协议的网关系统，由gateway服务、manager�
 
 <font color=red>尽量新增数据，请不要删除测试数据</font>
 
+#### 域名配置
+![hgw](https://github.com/dmhao/hgw/blob/master/img/hgw.gif)
+
+#### 路径配置 请求拦截
+![hgw-path](https://github.com/dmhao/hgw/blob/master/img/hgw-path.gif)
+
+#### 强制熔断
+![hgw-breaker](https://github.com/dmhao/hgw/blob/master/img/hgw-breaker.gif)
+
 #### 访问统计
 ![domain-metrics](https://github.com/dmhao/hgw/blob/master/img/metrics.png)
-
-#### 证书在线修改
-![cert-setting](https://github.com/dmhao/hgw/blob/master/img/cert-setting.png)
-
-#### 域名配置
-![domain-setting](https://github.com/dmhao/hgw/blob/master/img/domain-setting.png)
-
-#### 请求路径配置
-![path-setting](https://github.com/dmhao/hgw/blob/master/img/path-setting.png)
-
-#### 请求拦截的列表
-![request-copy-list](https://github.com/dmhao/hgw/blob/master/img/request-copy-list.png)
-
-#### 请求详情数据
-![request-copy-info](https://github.com/dmhao/hgw/blob/master/img/request-copy-info.png)
 
 ## 安装
 #### 1. 获取hgw代码

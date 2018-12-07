@@ -127,9 +127,6 @@
                     if(rsp.status == 1) {
                         all_request_data = rsp.data;
                         for(var i=0; i< rsp.data.length; i++) {
-                            if(rsp.data[i]["rsp_body"] != "" && rsp.data[i]["rsp_body"] != null ) {
-                                rsp.data[i]["rsp_body"] = JSON.parse(rsp.data[i]["rsp_body"]);
-                            }
                             list_html += "<tr class=\"text-c\">"
                             list_html += "<td>"+rsp.data[i].id+"</td>"
                             list_html += "<td>"+rsp.data[i].ser_name+"</td>"

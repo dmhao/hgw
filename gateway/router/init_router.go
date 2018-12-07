@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"github.com/coreos/etcd/clientv3"
 	"github.com/go-chi/chi"
-	"github.com/dmhao/hgw/gateway/core"
-	"github.com/dmhao/hgw/gateway/middleware"
+	"hgw/gateway/core"
+	"hgw/gateway/middleware"
 	"net/http"
 	"strings"
 )

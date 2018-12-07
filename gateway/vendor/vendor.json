@@ -45,6 +45,12 @@
 			"revisionTime": "2015-10-22T06:55:26Z"
 		},
 		{
+			"checksumSHA1": "xKxhxRfVwNBKWGjeWvcNZSNFr2s=",
+			"path": "github.com/axgle/mahonia",
+			"revision": "0c44128a83abf861873f8f4ec81fe58ff1cf6ea4",
+			"revisionTime": "2017-08-26T12:16:38Z"
+		},
+		{
 			"checksumSHA1": "y1OGTga4A+ppYpvjTLDYRpJ7RMo=",
 			"path": "github.com/coreos/etcd/auth/authpb",
 			"revision": "085adc5b8b732ef754d4c6d6e8bc3f63082eff9a",
@@ -433,6 +439,30 @@
 			"path": "gopkg.in/alecthomas/kingpin.v2",
 			"revision": "1087e65c9441605df944fb12c33f0fe7072d18ca",
 			"revisionTime": "2017-07-27T04:22:29Z"
+		},
+		{
+			"checksumSHA1": "XY3S/cTnh48PnEqCJafgQVZQus0=",
+			"path": "hgw/gateway/core",
+			"revision": "27ea9b9f261ef28f0bc9aa6ec9c811b35aa5957f",
+			"revisionTime": "2018-12-07T07:58:48Z"
+		},
+		{
+			"checksumSHA1": "nkdjKuVSjaBQV+aQtJ8XEVyUu6I=",
+			"path": "hgw/gateway/lb",
+			"revision": "27ea9b9f261ef28f0bc9aa6ec9c811b35aa5957f",
+			"revisionTime": "2018-12-07T07:58:48Z"
+		},
+		{
+			"checksumSHA1": "tniKPwmvkAunyk9lAhpzx1pg9vk=",
+			"path": "hgw/gateway/middleware",
+			"revision": "27ea9b9f261ef28f0bc9aa6ec9c811b35aa5957f",
+			"revisionTime": "2018-12-07T07:58:48Z"
+		},
+		{
+			"checksumSHA1": "j0xWb38MsisUClNUy0G5+IeQ5FQ=",
+			"path": "hgw/gateway/router",
+			"revision": "27ea9b9f261ef28f0bc9aa6ec9c811b35aa5957f",
+			"revisionTime": "2018-12-07T07:58:48Z"
 		}
 	],
 	"rootPath": "github.com/dmhao/hgw/gateway"

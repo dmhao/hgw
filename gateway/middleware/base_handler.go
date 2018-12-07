@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"github.com/didip/tollbooth/limiter"
-	"github.com/dmhao/hgw/gateway/core"
-	"github.com/dmhao/hgw/gateway/lb"
+	"hgw/gateway/core"
+	"hgw/gateway/lb"
 	"net/http"
 	"time"
 )

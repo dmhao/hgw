@@ -190,8 +190,10 @@
 
         form.verify({
             proxy_target: function(value){
-                if(proxy_targets < 1){
-                    return '请填写转发目标地址';
+                if($("#private_proxy_enabled").is(':checked')) {
+                    if (proxy_targets < 1) {
+                        return '请填写转发目标地址';
+                    }
                 }
             },
             reqPath: function(value) {
