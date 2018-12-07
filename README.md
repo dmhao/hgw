@@ -1,10 +1,13 @@
 # hgw
-【http-reverse_proxy, http/https-gateway，hot-reload】
 
-hgw是由gateway网关服务、manager控制服务构成的一套轻量级网关系统。目前支持http/https协议的服务控制。
+hgw 是一套支持http/https协议的网关系统，由gateway服务、manager服务构成。
 
-hgw通过【ETCD】存储服务数据，状态监控。
-### 功能
+### 开发初衷
+产品开发过程中版本多次迭代，缺乏服务管理，通过网关系统的负载均衡转发Api请求
+可以清晰了解到各个模块的请求情况，对接口细节进行细致管理，提高服务的可用性。
+有了网关还可以增加一些参数绑定、路径替换、权限验证、copy请求数据等功能，方便我们开发调试。
+
+### 功能特性
 1. 反向代理 
 2. 黑名单
 3. 访问日志
@@ -20,16 +23,23 @@ hgw通过【ETCD】存储服务数据，状态监控。
 控制服务：http://test.articlechain.cn:8080/admin/  账号：admin 密码：admin
 
 <font color=red>尽量新增数据，请不要删除测试数据</font>
+
+#### 访问统计
 ![domain-metrics](https://github.com/dmhao/hgw/blob/master/img/metrics.png)
 
-![domain-list](https://github.com/dmhao/hgw/blob/master/img/domain-list.png)
+#### 证书在线修改
+![cert-setting](https://github.com/dmhao/hgw/blob/master/img/cert-setting.png)
 
+#### 域名配置
 ![domain-setting](https://github.com/dmhao/hgw/blob/master/img/domain-setting.png)
 
+#### 请求路径配置
 ![path-setting](https://github.com/dmhao/hgw/blob/master/img/path-setting.png)
 
+#### 请求拦截的列表
 ![request-copy-list](https://github.com/dmhao/hgw/blob/master/img/request-copy-list.png)
 
+#### 请求详情数据
 ![request-copy-info](https://github.com/dmhao/hgw/blob/master/img/request-copy-info.png)
 
 ## 安装
@@ -115,3 +125,18 @@ Flags:
 访问 manager监听的服务地址+/admin/ 管理gateway服务。
 
 <font color="red">**注**</font>： 自己搭建服务，第一次访问请先访问 /admin/init.html 初始化管理账号密码。
+
+
+## 感谢
+---
+[x-admin](http://x.xuebingsi.com/) 后台管理html模板
+
+[gin](https://github.com/gin-gonic/gin) Golang Web框架
+
+[go-chi](https://github.com/go-chi/chi) Golang Router
+
+[jwt-go](https://github.com/dgrijalva/jwt-go) Golang Jwt
+
+[logrus](https://github.com/sirupsen/logrus) Golang Log
+
+[hystrix-go](https://github.com/afex/hystrix-go) Golang CircuitBreaker
