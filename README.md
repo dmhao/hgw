@@ -20,18 +20,17 @@ hgw通过【ETCD】存储服务数据，状态监控。
 控制服务：http://test.articlechain.cn:8080/admin/  账号：admin 密码：admin
 
 <font color=red>尽量新增数据，请不要删除测试数据</font>
+![domain-metrics](https://github.com/dmhao/hgw/blob/master/img/metrics.png)
 
-![domain-metrics](https://github.com/dmhao/hgw/tree/master/img/metrics.png)
+![domain-list](https://github.com/dmhao/hgw/blob/master/img/domain-list.png)
 
-![domain-list](https://github.com/dmhao/hgw/tree/master/img/domain-list.png)
+![domain-setting](https://github.com/dmhao/hgw/blob/master/img/domain-setting.png)
 
-![domain-setting](https://github.com/dmhao/hgw/tree/master/img/domain-setting.png)
+![path-setting](https://github.com/dmhao/hgw/blob/master/img/path-setting.png)
 
-![path-setting](https://github.com/dmhao/hgw/tree/master/img/path-setting.png)
+![request-copy-list](https://github.com/dmhao/hgw/blob/master/img/request-copy-list.png)
 
-![request-copy-list](https://github.com/dmhao/hgw/tree/master/img/request-copy-list.png)
-
-![request-copy-info](https://github.com/dmhao/hgw/tree/master/img/request-copy-info.png)
+![request-copy-info](https://github.com/dmhao/hgw/blob/master/img/request-copy-info.png)
 
 ## 安装
 #### 1. 获取hgw代码
