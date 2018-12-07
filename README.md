@@ -11,20 +11,27 @@ hgw通过【ETCD】存储服务数据，状态监控。
 4. 限流
 5. 熔断 【错误熔断、超时熔断、强制熔断】
 6. 负载均衡 【轮询、随机、权重】
-7. 访问统计 【访问量、访问时长】
-8. 支持https, 动态设置https证书 【https证书热加载，动态更新】
-
+7. 请求路径过滤、路径级私有负载均衡
+8. 访问统计 【访问量、访问时长】
+9. 支持https, 动态设置https证书 【https证书热加载，动态更新】
+10. 访问拷贝 【复制请求数据、返回数据】
 #### 测试地址
 网关服务：https://test.articlechain.cn/
 控制服务：http://test.articlechain.cn:8080/admin/  账号：admin 密码：admin
 
-![metricspng](https://img.hacpai.com/pipe/450370050/450370050/450370050/006cb39d23e94ec28949434f3b2f7817.png)
+<font color=red>尽量新增数据，请不要删除测试数据</font>
 
-![domainpng](https://img.hacpai.com/pipe/450370050/450370050/450370050/8df958d3ece3464abd66dc1f898bc284.png)
+![domain-metrics](https://github.com/dmhao/hgw/tree/master/img/metrics.png)
 
-![pathpng](https://img.hacpai.com/pipe/450370050/450370050/450370050/822c490e98214b88bc23e0daa20c7b41.png)
+![domain-list](https://github.com/dmhao/hgw/tree/master/img/domain-list.png)
 
-![certpng](https://img.hacpai.com/pipe/450370050/450370050/450370050/8ec2b0ec642c4307a8040e562998c0b0.png)
+![domain-setting](https://github.com/dmhao/hgw/tree/master/img/domain-setting.png)
+
+![path-setting](https://github.com/dmhao/hgw/tree/master/img/path-setting.png)
+
+![request-copy-list](https://github.com/dmhao/hgw/tree/master/img/request-copy-list.png)
+
+![request-copy-info](https://github.com/dmhao/hgw/tree/master/img/request-copy-info.png)
 
 ## 安装
 #### 1. 获取hgw代码
@@ -108,4 +115,4 @@ Flags:
 #### 6. 使用
 访问 manager监听的服务地址+/admin/ 管理gateway服务。
 
-<font color="red">**注**</font>： 第一次访问未初始化后台账户请先访问 /admin/init.html 初始化。
+<font color="red">**注**</font>： 自己搭建服务，第一次访问请先访问 /admin/init.html 初始化管理账号密码。
