@@ -12,3 +12,6 @@
 *.out
 
 .idea
+gateway/.idea
+manager/.idea
+img/.idea
